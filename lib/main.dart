@@ -1,3 +1,5 @@
+import 'package:currency_exchange_app/pages/main_page.dart';
+import 'package:currency_exchange_app/utils/colors.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -11,24 +13,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        canvasColor: Colors.transparent,
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: kPrimaryColor, brightness: Brightness.dark),
         useMaterial3: true,
       ),
-      home: const MyHomePage(),
+      home: const MainPage(),
     );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
   }
 }
