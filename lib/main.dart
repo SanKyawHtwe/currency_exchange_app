@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         canvasColor: Colors.transparent,
         colorScheme: ColorScheme.fromSeed(
-            seedColor: kPrimaryColor, brightness: Brightness.dark),
+            seedColor: kPrimaryColor, brightness: Brightness.light),
         useMaterial3: true,
       ),
       home: const MainPage(),
