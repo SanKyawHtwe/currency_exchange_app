@@ -17,6 +17,61 @@ class CurrencyModel {
       ValueNotifier<Currencies>(Currencies.mmk);
   final ValueNotifier<Currencies> tmp =
       ValueNotifier<Currencies>(Currencies.php);
+  final ValueNotifier<double> result = ValueNotifier<double>(0.00);
+
+  void swapCurrencies() {
+    tmp.value = fromCurrency.value;
+    fromCurrency.value = toCurrency.value;
+    toCurrency.value = tmp.value;
+  }
+
+  final Map<Currencies, Map<Currencies, double>> exchangeRates = {
+    Currencies.usd: {
+      Currencies.usd: 1.0,
+      Currencies.mmk: 2078.61,
+      Currencies.php: 58.5142,
+      Currencies.thb: 34.558,
+    },
+    Currencies.mmk: {
+      Currencies.usd: 0.00047,
+      Currencies.mmk: 1.0,
+      Currencies.php: 0.02761,
+      Currencies.thb: 0.01631,
+    },
+    Currencies.php: {
+      Currencies.usd: 0.01707,
+      Currencies.mmk: 36.2169,
+      Currencies.php: 1.0,
+      Currencies.thb: 0.59125,
+    },
+    Currencies.thb: {
+      Currencies.usd: 0.02892,
+      Currencies.mmk: 60.1035,
+      Currencies.php: 1.69195,
+      Currencies.thb: 1.0,
+    },
+  };
+
+  void calculateResult({
+    required String fromValue,
+    required Currencies fromCurrency,
+    required Currencies toCurrency,
+  }) {
+    if (fromValue.isEmpty) {
+      result.value = 0.0;
+      return;
+    }
+
+    try {
+      double amount = double.parse(fromValue);
+
+      double exchangeRate = exchangeRates[fromCurrency]?[toCurrency] ?? 1.0;
+
+      result.value = amount * exchangeRate;
+    } catch (e) {
+      result.value = 0.0;
+    }
+  }
 }
 
 enum Currencies {
@@ -37,9 +92,14 @@ class _BodyView extends StatefulWidget {
 }
 
 class _BodyViewState extends State<_BodyView> {
-  Currencies selectedFromCurrency = Currencies.usd;
-  Currencies selectedToCurrency = Currencies.mmk;
   final model = CurrencyModel();
+  final TextEditingController _fromController = TextEditingController();
+
+  @override
+  void dispose() {
+    _fromController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +127,10 @@ class _BodyViewState extends State<_BodyView> {
                                 if (currency != null) {
                                   model.fromCurrency.value = currency;
                                 }
+                                model.calculateResult(
+                                    fromValue: _fromController.text,
+                                    fromCurrency: model.fromCurrency.value,
+                                    toCurrency: model.toCurrency.value);
                               },
                               inputDecorationTheme: InputDecorationTheme(
                                   fillColor: Theme.of(context)
@@ -90,6 +154,13 @@ class _BodyViewState extends State<_BodyView> {
                         height: 8,
                       ),
                       TextField(
+                        controller: _fromController,
+                        onChanged: (String? value) {
+                          model.calculateResult(
+                              fromValue: _fromController.text,
+                              fromCurrency: model.fromCurrency.value,
+                              toCurrency: model.toCurrency.value);
+                        },
                         decoration: InputDecoration(
                             fillColor:
                                 Theme.of(context).colorScheme.surfaceContainer,
@@ -105,9 +176,11 @@ class _BodyViewState extends State<_BodyView> {
                 flex: 1,
                 child: IconButton(
                   onPressed: () {
-                    model.tmp.value = model.fromCurrency.value;
-                    model.fromCurrency.value = model.toCurrency.value;
-                    model.toCurrency.value = model.tmp.value;
+                    model.swapCurrencies();
+                    model.calculateResult(
+                        fromValue: _fromController.text,
+                        fromCurrency: model.fromCurrency.value,
+                        toCurrency: model.toCurrency.value);
                   },
                   icon: Icon(CupertinoIcons.arrow_right_arrow_left),
                   iconSize: 16,
@@ -130,6 +203,10 @@ class _BodyViewState extends State<_BodyView> {
                                 if (currency != null) {
                                   model.toCurrency.value = currency;
                                 }
+                                model.calculateResult(
+                                    fromValue: _fromController.text,
+                                    fromCurrency: model.fromCurrency.value,
+                                    toCurrency: model.toCurrency.value);
                               },
                               inputDecorationTheme: InputDecorationTheme(
                                   fillColor: Theme.of(context)
@@ -152,14 +229,22 @@ class _BodyViewState extends State<_BodyView> {
                       SizedBox(
                         height: 8,
                       ),
-                      TextField(
-                        decoration: InputDecoration(
-                            filled: true,
-                            fillColor:
-                                Theme.of(context).colorScheme.surfaceContainer,
-                            hintText: "To"),
-                        keyboardType: TextInputType.number,
-                      )
+                      ValueListenableBuilder(
+                          valueListenable: model.result,
+                          builder: (BuildContext context, double value, child) {
+                            return TextField(
+                              readOnly: true,
+                              controller:
+                                  TextEditingController(text: value.toString()),
+                              decoration: InputDecoration(
+                                  filled: true,
+                                  fillColor: Theme.of(context)
+                                      .colorScheme
+                                      .surfaceContainer,
+                                  hintText: '$value'),
+                              keyboardType: TextInputType.number,
+                            );
+                          }),
                     ],
                   ),
                 ),
