@@ -1,6 +1,7 @@
 import 'package:currency_exchange_app/pages/bookmark_page.dart';
 import 'package:currency_exchange_app/pages/landing_page.dart';
 import 'package:currency_exchange_app/pages/profile_page.dart';
+import 'package:currency_exchange_app/utils/colors.dart';
 import 'package:currency_exchange_app/utils/dimens.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,25 +23,31 @@ class _MainPageState extends State<MainPage> {
   ];
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // extendBody: true,
-      appBar: AppBar(),
-      body: screenWidgets[currentIndex],
-      bottomNavigationBar: NavigationBar(
-          indicatorShape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
-          elevation: 2,
-          height: 58,
-          labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-          backgroundColor: Theme.of(context).colorScheme.inverseSurface,
-          indicatorColor: Theme.of(context).colorScheme.surface,
-          selectedIndex: currentIndex,
-          onDestinationSelected: (selectedIndex) {
-            setState(() {
-              currentIndex = selectedIndex;
-            });
-          },
-          destinations: _getBottomNavigationItem()),
+    return Container(
+      decoration: BoxDecoration(
+          gradient: RadialGradient(
+              colors: [kCardGradient1, kCardGradient2, kCardGradient3],
+              radius: 3,
+              center: Alignment(-1, -1))),
+      child: Scaffold(
+        // extendBody: true,
+        body: screenWidgets[currentIndex],
+        bottomNavigationBar: NavigationBar(
+            indicatorShape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+            elevation: 2,
+            height: 58,
+            labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+            backgroundColor: Theme.of(context).colorScheme.inverseSurface,
+            indicatorColor: Theme.of(context).colorScheme.surface,
+            selectedIndex: currentIndex,
+            onDestinationSelected: (selectedIndex) {
+              setState(() {
+                currentIndex = selectedIndex;
+              });
+            },
+            destinations: _getBottomNavigationItem()),
+      ),
     );
   }
 
