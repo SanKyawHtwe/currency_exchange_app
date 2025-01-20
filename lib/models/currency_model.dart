@@ -1,3 +1,4 @@
+import 'package:flag/flag.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -11,7 +12,7 @@ class CurrencyModel {
   final ValueNotifier<String> result = ValueNotifier<String>("");
 
   final fiveDecimalFormat = NumberFormat.currency(symbol: '', decimalDigits: 5);
-  final currencyFormat = NumberFormat.currency(symbol: '');
+  final currencyFormat = NumberFormat.currency(symbol: '', decimalDigits: 2);
   final sameFormat = NumberFormat.currency(symbol: '', decimalDigits: 0);
 
   void swapCurrencies() {
@@ -66,10 +67,10 @@ class CurrencyModel {
         result.value = sameFormat.format(exchangedAmount);
       } else if (toCurrency == Currencies.usd) {
         result.value = fiveDecimalFormat.format(exchangedAmount);
-      } else if (fromCurrency == Currencies.mmk) {
-        result.value = fiveDecimalFormat.format(exchangedAmount);
-      } else {
+      } else if (fromCurrency == Currencies.usd) {
         result.value = currencyFormat.format(exchangedAmount);
+      } else {
+        result.value = fiveDecimalFormat.format(exchangedAmount);
       }
     } catch (e) {
       result.value = '';
@@ -78,13 +79,13 @@ class CurrencyModel {
 }
 
 enum Currencies {
-  usd('USD', Icons.flag),
-  thb('THB', Icons.flag_circle_outlined),
-  php('PHP', Icons.flag_circle_rounded),
-  mmk('MMK', Icons.flag_circle);
+  usd('USD', FlagsCode.US, 'United States Dollar'),
+  thb('THB', FlagsCode.TH, 'Thailand Bhat'),
+  php('PHP', FlagsCode.PH, 'Philippines Peso'),
+  mmk('MMK', FlagsCode.MM, 'Myanmar Kyat');
 
-  const Currencies(this.label, this.icon);
+  const Currencies(this.label, this.flag, this.name);
 
-  final String label;
-  final IconData icon;
+  final String label, name;
+  final FlagsCode flag;
 }
