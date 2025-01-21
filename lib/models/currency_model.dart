@@ -27,25 +27,36 @@ class CurrencyModel {
       Currencies.mmk: 2078.61,
       Currencies.php: 58.5142,
       Currencies.thb: 34.558,
+      Currencies.vnd: 25304.9,
     },
     Currencies.mmk: {
       Currencies.usd: 0.00047,
       Currencies.mmk: 1.0,
       Currencies.php: 0.02761,
       Currencies.thb: 0.01631,
+      Currencies.vnd: 11.941,
     },
     Currencies.php: {
       Currencies.usd: 0.01707,
       Currencies.mmk: 36.2169,
       Currencies.php: 1.0,
       Currencies.thb: 0.59125,
+      Currencies.vnd: 432.684,
     },
     Currencies.thb: {
       Currencies.usd: 0.02892,
       Currencies.mmk: 60.1035,
       Currencies.php: 1.69195,
       Currencies.thb: 1.0,
+      Currencies.vnd: 738.239,
     },
+    Currencies.vnd: {
+      Currencies.vnd: 1.0,
+      Currencies.usd: 0.00004,
+      Currencies.mmk: 0.08206,
+      Currencies.php: 0.0023,
+      Currencies.thb: 0.00135,
+    }
   };
 
   void calculateResult({
@@ -79,10 +90,14 @@ class CurrencyModel {
 }
 
 enum Currencies {
-  usd('USD', FlagsCode.US, 'United States Dollar'),
-  thb('THB', FlagsCode.TH, 'Thailand Bhat'),
-  php('PHP', FlagsCode.PH, 'Philippines Peso'),
-  mmk('MMK', FlagsCode.MM, 'Myanmar Kyat');
+  usd('USD', FlagsCode.US, 'US Dollar'),
+  thb('THB', FlagsCode.TH, 'Thai Baht'),
+  php('PHP', FlagsCode.PH, 'Philippine Peso'),
+  mmk('MMK', FlagsCode.MM, 'Myanmar Kyat'),
+  vnd('VND', FlagsCode.VN, 'Vietnamese Dong'),
+  khr('KHR', FlagsCode.KH, 'Cambodian Riel'),
+  sgd('SGD', FlagsCode.SG, 'Singapore Dollar'),
+  lak('LAK', FlagsCode.LA, 'Laos Kap');
 
   const Currencies(this.label, this.flag, this.name);
 

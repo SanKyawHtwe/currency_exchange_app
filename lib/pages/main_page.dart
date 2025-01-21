@@ -1,4 +1,4 @@
-import 'package:currency_exchange_app/pages/bookmark_page.dart';
+import 'package:currency_exchange_app/pages/historical_rates_page.dart';
 import 'package:currency_exchange_app/pages/landing_page.dart';
 import 'package:currency_exchange_app/pages/profile_page.dart';
 import 'package:currency_exchange_app/utils/colors.dart';
@@ -18,7 +18,7 @@ class _MainPageState extends State<MainPage> {
 
   List<Widget> screenWidgets = [
     const LandingPage(),
-    const BookmarkPage(),
+    const HistoricalRatesPage(),
     const ProfilePage()
   ];
   @override
@@ -67,14 +67,14 @@ class _MainPageState extends State<MainPage> {
           selectedIcon: Icon(
             color: Theme.of(context).colorScheme.inverseSurface,
             size: kBottomNavIconSize,
-            Icons.bookmark_outline,
+            CupertinoIcons.chart_bar_square_fill,
           ),
           icon: Icon(
             color: Theme.of(context).colorScheme.surface,
             size: kBottomNavIconSize,
-            Icons.bookmark_outline,
+            CupertinoIcons.chart_bar_square,
           ),
-          label: "Bookmark"),
+          label: "Historical"),
       NavigationDestination(
           selectedIcon: Icon(
               color: Theme.of(context).colorScheme.inverseSurface,
