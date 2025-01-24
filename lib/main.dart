@@ -1,7 +1,9 @@
 import 'package:currency_exchange_app/pages/main_page.dart';
+import 'package:currency_exchange_app/providers/currency_provider.dart';
 import 'package:currency_exchange_app/utils/colors.dart';
 import 'package:currency_exchange_app/utils/fonts.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,15 +14,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-          canvasColor: Colors.transparent,
-          colorScheme: ColorScheme.fromSeed(
-              seedColor: kPrimaryColor, brightness: Brightness.light),
-          useMaterial3: true,
-          fontFamily: kPoppins),
-      home: const MainPage(),
-      debugShowCheckedModeBanner: false,
+    return ChangeNotifierProvider(
+      create: (context) => CurrencyProvider(),
+      child: MaterialApp(
+        theme: ThemeData(
+            canvasColor: Colors.transparent,
+            colorScheme: ColorScheme.fromSeed(
+                seedColor: kPrimaryColor, brightness: Brightness.light),
+            useMaterial3: true,
+            fontFamily: kPoppins),
+        home: const MainPage(),
+        debugShowCheckedModeBanner: false,
+      ),
     );
   }
 }
