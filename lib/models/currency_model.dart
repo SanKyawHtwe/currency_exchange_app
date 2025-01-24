@@ -1,106 +1,84 @@
-import 'package:flag/flag.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-
 class CurrencyModel {
-  final ValueNotifier<Currencies> fromCurrency =
-      ValueNotifier<Currencies>(Currencies.usd);
-  final ValueNotifier<Currencies> toCurrency =
-      ValueNotifier<Currencies>(Currencies.mmk);
-  final ValueNotifier<Currencies> tmp =
-      ValueNotifier<Currencies>(Currencies.php);
-  final ValueNotifier<String> result = ValueNotifier<String>("");
-
-  final fiveDecimalFormat = NumberFormat.currency(symbol: '', decimalDigits: 5);
-  final currencyFormat = NumberFormat.currency(symbol: '', decimalDigits: 2);
-  final sameFormat = NumberFormat.currency(symbol: '', decimalDigits: 0);
-
-  void swapCurrencies() {
-    tmp.value = fromCurrency.value;
-    fromCurrency.value = toCurrency.value;
-    toCurrency.value = tmp.value;
-  }
-
-  final Map<Currencies, Map<Currencies, double>> exchangeRates = {
-    Currencies.usd: {
-      Currencies.usd: 1.0,
-      Currencies.mmk: 2078.61,
-      Currencies.php: 58.5142,
-      Currencies.thb: 34.558,
-      Currencies.vnd: 25304.9,
-    },
-    Currencies.mmk: {
-      Currencies.usd: 0.00047,
-      Currencies.mmk: 1.0,
-      Currencies.php: 0.02761,
-      Currencies.thb: 0.01631,
-      Currencies.vnd: 11.941,
-    },
-    Currencies.php: {
-      Currencies.usd: 0.01707,
-      Currencies.mmk: 36.2169,
-      Currencies.php: 1.0,
-      Currencies.thb: 0.59125,
-      Currencies.vnd: 432.684,
-    },
-    Currencies.thb: {
-      Currencies.usd: 0.02892,
-      Currencies.mmk: 60.1035,
-      Currencies.php: 1.69195,
-      Currencies.thb: 1.0,
-      Currencies.vnd: 738.239,
-    },
-    Currencies.vnd: {
-      Currencies.vnd: 1.0,
-      Currencies.usd: 0.00004,
-      Currencies.mmk: 0.08206,
-      Currencies.php: 0.0023,
-      Currencies.thb: 0.00135,
-    }
-  };
-
-  void calculateResult({
-    required String fromValue,
-    required Currencies fromCurrency,
-    required Currencies toCurrency,
-  }) {
-    if (fromValue.isEmpty) {
-      result.value = '';
-      return;
-    }
-
-    try {
-      double amount = double.parse(fromValue);
-      double exchangeRate = exchangeRates[fromCurrency]?[toCurrency] ?? 1.0;
-      double exchangedAmount = amount * exchangeRate;
-
-      if (toCurrency == fromCurrency) {
-        result.value = sameFormat.format(exchangedAmount);
-      } else if (toCurrency == Currencies.usd) {
-        result.value = fiveDecimalFormat.format(exchangedAmount);
-      } else if (fromCurrency == Currencies.usd) {
-        result.value = currencyFormat.format(exchangedAmount);
-      } else {
-        result.value = fiveDecimalFormat.format(exchangedAmount);
-      }
-    } catch (e) {
-      result.value = '';
-    }
+  final Meta? meta;
+  final Data? data;
+  CurrencyModel({this.meta, this.data});
+  factory CurrencyModel.fromJson(Map<String, dynamic> json) {
+    const List<String> specificCurrencies = [
+      'USD',
+      'THB',
+      'MMK',
+      'PHP',
+      'KHR',
+      'VND',
+      'SGD',
+      'LAK',
+    ];
+    final filteredData = Map.fromEntries(
+      (json['data'] as Map<String, dynamic>)
+          .entries
+          .where((entry) => specificCurrencies.contains(entry.key))
+          .map(
+              (entry) => MapEntry(entry.key, Currencies.fromJson(entry.value))),
+    );
+    return CurrencyModel(
+      meta: Meta.fromJson(json['meta']),
+      data: filteredData.isNotEmpty ? Data.fromJson(filteredData) : null,
+    );
   }
 }
 
-enum Currencies {
-  usd('USD', FlagsCode.US, 'US Dollar'),
-  thb('THB', FlagsCode.TH, 'Thai Baht'),
-  php('PHP', FlagsCode.PH, 'Philippine Peso'),
-  mmk('MMK', FlagsCode.MM, 'Myanmar Kyat'),
-  vnd('VND', FlagsCode.VN, 'Vietnamese Dong'),
-  khr('KHR', FlagsCode.KH, 'Cambodian Riel'),
-  sgd('SGD', FlagsCode.SG, 'Singapore Dollar'),
-  lak('LAK', FlagsCode.LA, 'Laos Kap');
+class Meta {
+  String? lastUpdatedAt;
+  Meta({this.lastUpdatedAt});
+  factory Meta.fromJson(Map<String, dynamic> json) {
+    return Meta(lastUpdatedAt: json["last_updated_at"]);
+  }
+}
 
-  const Currencies(this.label, this.flag, this.name);
+class Data {
+  Map<Code, dynamic>? currencies;
 
-  final String label, name;
-  final FlagsCode flag;
+  Data({this.currencies});
+
+  factory Data.fromJson(Map<String, dynamic> json) {
+    return Data(
+      currencies: Map.fromEntries(
+        json.entries
+            .where((entry) =>
+                Code.values.any((e) => e.value == entry.key) &&
+                entry.value is Map<String, dynamic>)
+            .map((entry) => MapEntry(
+                  Code.values.firstWhere((e) => e.value == entry.key),
+                  Currencies.fromJson(entry.value as Map<String, dynamic>),
+                )),
+      ),
+    );
+  }
+}
+
+class Currencies {
+  Code? code;
+  double? value;
+  Currencies({this.code, this.value});
+  factory Currencies.fromJson(Map<String, dynamic> json) {
+    return Currencies(
+        code: Code.values.firstWhere((e) => e.value == json["code"]),
+        value: (json["value"] as num).toDouble());
+  }
+}
+
+enum Code {
+  USD('USD'),
+  THB('THB'),
+  MMK('MMK'),
+  PHP('PHP'),
+  KHR('KHR'),
+  VND('VND'),
+  SGD('SGD'),
+  LAK('LAK');
+
+  /// The string representation of the currency code.
+  const Code(this.value);
+
+  final String value;
 }

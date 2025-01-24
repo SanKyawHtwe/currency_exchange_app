@@ -1,9 +1,11 @@
 import 'package:currency_exchange_app/models/currency_model.dart';
+import 'package:currency_exchange_app/providers/currency_provider.dart';
 import 'package:currency_exchange_app/utils/colors.dart';
 import 'package:currency_exchange_app/utils/dimens.dart';
 import 'package:flag/flag.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LandingPage extends StatelessWidget {
   const LandingPage({super.key});
@@ -31,8 +33,15 @@ class _BodyView extends StatefulWidget {
 }
 
 class _BodyViewState extends State<_BodyView> {
-  final model = CurrencyModel();
   final TextEditingController _fromController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Provider.of<CurrencyProvider>(context, listen: false).getExchangeRate();
+    });
+  }
 
   @override
   void dispose() {
@@ -42,6 +51,18 @@ class _BodyViewState extends State<_BodyView> {
 
   @override
   Widget build(BuildContext context) {
+    final currencyProvider = Provider.of<CurrencyProvider>(context);
+    final Map<Code, String> flags = {
+      Code.USD: 'US',
+      Code.THB: 'TH',
+      Code.MMK: 'MM',
+      Code.PHP: 'PH',
+      Code.KHR: 'KH',
+      Code.VND: 'VN',
+      Code.SGD: 'SG',
+      Code.LAK: 'LA',
+    };
+
     void showFromBottomSheet() {
       showModalBottomSheet(
         context: context,
@@ -71,23 +92,25 @@ class _BodyViewState extends State<_BodyView> {
                   ),
                   Expanded(
                       child: ListView.builder(
-                          itemCount: Currencies.values.length,
+                          itemCount: Code.values.length,
                           itemBuilder: (BuildContext context, int index) {
-                            final currency = Currencies.values[index];
                             return ListTile(
-                              leading: Flag.fromCode(
-                                currency.flag,
+                              leading: Flag.fromString(
+                                flags[Code.values[index]] ?? 'US',
                                 width: 24,
                                 height: 24,
                                 flagSize: FlagSize.size_1x1,
                               ),
-                              title: Text(currency.name),
+                              title: Text(Code.values[index].value),
                               onTap: () {
-                                model.fromCurrency.value = currency;
-                                model.calculateResult(
-                                    fromValue: _fromController.text,
-                                    fromCurrency: model.fromCurrency.value,
-                                    toCurrency: model.toCurrency.value);
+                                currencyProvider.fromCurrency.value =
+                                    Code.values[index];
+                                currencyProvider.calculateResult(
+                                  inputAmount: _fromController.text,
+                                  fromCurrency:
+                                      currencyProvider.fromCurrency.value,
+                                  toCurrency: currencyProvider.toCurrency.value,
+                                );
                                 Navigator.pop(context);
                               },
                             );
@@ -148,23 +171,26 @@ class _BodyViewState extends State<_BodyView> {
                   ),
                   Expanded(
                       child: ListView.builder(
-                          itemCount: Currencies.values.length,
+                          itemCount: Code.values.length,
                           itemBuilder: (BuildContext context, int index) {
-                            final currency = Currencies.values[index];
                             return ListTile(
-                              leading: Flag.fromCode(
-                                currency.flag,
+                              leading: Flag.fromString(
+                                flags[Code.values[index]] ?? 'US',
                                 width: 24,
                                 height: 24,
                                 flagSize: FlagSize.size_1x1,
                               ),
-                              title: Text(currency.name),
+                              title: Text(Code.values[index].value),
                               onTap: () {
-                                model.toCurrency.value = currency;
-                                model.calculateResult(
-                                    fromValue: _fromController.text,
-                                    fromCurrency: model.fromCurrency.value,
-                                    toCurrency: model.toCurrency.value);
+                                currencyProvider.toCurrency.value =
+                                    Code.values[index];
+
+                                currencyProvider.calculateResult(
+                                  inputAmount: _fromController.text,
+                                  fromCurrency:
+                                      currencyProvider.fromCurrency.value,
+                                  toCurrency: currencyProvider.toCurrency.value,
+                                );
                                 Navigator.pop(context);
                               },
                             );
@@ -205,7 +231,7 @@ class _BodyViewState extends State<_BodyView> {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Padding(
@@ -226,10 +252,11 @@ class _BodyViewState extends State<_BodyView> {
                           overflow: TextOverflow.visible),
                       textInputAction: TextInputAction.done,
                       onChanged: (String? value) {
-                        model.calculateResult(
-                            fromValue: _fromController.text,
-                            fromCurrency: model.fromCurrency.value,
-                            toCurrency: model.toCurrency.value);
+                        currencyProvider.calculateResult(
+                          inputAmount: _fromController.text,
+                          fromCurrency: currencyProvider.fromCurrency.value,
+                          toCurrency: currencyProvider.toCurrency.value,
+                        );
                       },
                       decoration: InputDecoration(
                           label: Row(
@@ -244,6 +271,7 @@ class _BodyViewState extends State<_BodyView> {
                           border: InputBorder.none,
                           filled: false,
                           counterText: "",
+                          enabled: !currencyProvider.isLoading,
                           hintText: "From"),
                       keyboardType: TextInputType.number,
                     ),
@@ -257,16 +285,15 @@ class _BodyViewState extends State<_BodyView> {
                   Expanded(
                     flex: 2,
                     child: ValueListenableBuilder(
-                        valueListenable: model.fromCurrency,
-                        builder:
-                            (BuildContext context, Currencies value, child) {
+                        valueListenable: currencyProvider.fromCurrency,
+                        builder: (BuildContext context, Code code, child) {
                           return InkWell(
                             onTap: showFromBottomSheet,
                             child: Row(
                               children: [
                                 Expanded(
-                                  child: Flag.fromCode(
-                                    model.fromCurrency.value.flag,
+                                  child: Flag.fromString(
+                                    flags[code] ?? 'US',
                                     width: 24,
                                     height: 24,
                                     flagSize: FlagSize.size_1x1,
@@ -275,7 +302,7 @@ class _BodyViewState extends State<_BodyView> {
                                 const SizedBox(
                                   width: 8,
                                 ),
-                                Text(model.fromCurrency.value.label),
+                                Text(code.value),
                                 const SizedBox(
                                   width: 8,
                                 ),
@@ -302,11 +329,12 @@ class _BodyViewState extends State<_BodyView> {
                     backgroundColor: WidgetStatePropertyAll(
                         Theme.of(context).colorScheme.inverseSurface)),
                 onPressed: () {
-                  model.swapCurrencies();
-                  model.calculateResult(
-                      fromValue: _fromController.text,
-                      fromCurrency: model.fromCurrency.value,
-                      toCurrency: model.toCurrency.value);
+                  currencyProvider.swapCurrencies();
+                  currencyProvider.calculateResult(
+                    inputAmount: _fromController.text,
+                    fromCurrency: currencyProvider.fromCurrency.value,
+                    toCurrency: currencyProvider.toCurrency.value,
+                  );
                 },
                 label: Text(''),
                 icon: Padding(
@@ -335,7 +363,7 @@ class _BodyViewState extends State<_BodyView> {
                   Expanded(
                     flex: 5,
                     child: ValueListenableBuilder(
-                        valueListenable: model.result,
+                        valueListenable: currencyProvider.result,
                         builder: (BuildContext context, String value, child) {
                           return TextField(
                             readOnly: true,
@@ -364,6 +392,7 @@ class _BodyViewState extends State<_BodyView> {
                                 fillColor: Theme.of(context)
                                     .colorScheme
                                     .surfaceContainer,
+                                enabled: !currencyProvider.isLoading,
                                 hintText: "To"),
                             keyboardType: TextInputType.number,
                           );
@@ -377,16 +406,15 @@ class _BodyViewState extends State<_BodyView> {
                   Expanded(
                     flex: 2,
                     child: ValueListenableBuilder(
-                        valueListenable: model.toCurrency,
-                        builder:
-                            (BuildContext context, Currencies value, child) {
+                        valueListenable: currencyProvider.toCurrency,
+                        builder: (BuildContext context, Code code, child) {
                           return InkWell(
                             onTap: showToBottomSheet,
                             child: Row(
                               children: [
                                 Expanded(
-                                  child: Flag.fromCode(
-                                    model.toCurrency.value.flag,
+                                  child: Flag.fromString(
+                                    flags[code] ?? 'US',
                                     width: 24,
                                     height: 24,
                                     flagSize: FlagSize.size_1x1,
@@ -395,7 +423,7 @@ class _BodyViewState extends State<_BodyView> {
                                 const SizedBox(
                                   width: 8,
                                 ),
-                                Text(model.toCurrency.value.label),
+                                Text(code.value),
                                 const SizedBox(
                                   width: 8,
                                 ),
@@ -407,6 +435,44 @@ class _BodyViewState extends State<_BodyView> {
                   ),
                 ],
               ),
+            ),
+            const SizedBox(
+              height: 240,
+            ),
+
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Text(
+                    textAlign: TextAlign.center,
+                    "Last updated at :",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
+                ),
+                currencyProvider.isLoading
+                    ? Expanded(
+                        child: Text("Updating rates...",
+                            style: TextStyle(
+                                fontSize: 14,
+                                color: Theme.of(context).colorScheme.primary)),
+                      )
+                    : Expanded(
+                        child: Text(
+                            "${currencyProvider.currencyData.meta?.lastUpdatedAt}",
+                            style: TextStyle(
+                                fontSize: 14,
+                                color:
+                                    Theme.of(context).colorScheme.onSurface)),
+                      )
+              ],
+            ),
+            const SizedBox(
+              height: 16,
             ),
           ],
         ),
