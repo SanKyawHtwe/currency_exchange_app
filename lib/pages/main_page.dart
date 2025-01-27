@@ -1,6 +1,7 @@
 import 'package:currency_exchange_app/pages/historical_rates_page.dart';
 import 'package:currency_exchange_app/pages/landing_page.dart';
 import 'package:currency_exchange_app/pages/profile_page.dart';
+import 'package:currency_exchange_app/pages/test_chart.dart';
 import 'package:currency_exchange_app/utils/colors.dart';
 import 'package:currency_exchange_app/utils/dimens.dart';
 import 'package:flutter/cupertino.dart';
@@ -18,7 +19,7 @@ class _MainPageState extends State<MainPage> {
 
   List<Widget> screenWidgets = [
     const LandingPage(),
-    const HistoricalRatesPage(),
+    const TestChart(),
     const ProfilePage()
   ];
   @override

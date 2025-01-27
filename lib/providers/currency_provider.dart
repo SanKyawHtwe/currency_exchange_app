@@ -1,11 +1,12 @@
 import 'package:currency_exchange_app/models/currency_model.dart';
-import 'package:currency_exchange_app/network/mock_service.dart';
+import 'package:currency_exchange_app/network/api_service.dart';
+import 'package:currency_exchange_app/utils/result.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class CurrencyProvider extends ChangeNotifier {
-  final _apiService = MockService();
+  final _apiService = ApiService();
   final fiveDecimalFormat = NumberFormat.currency(symbol: '', decimalDigits: 5);
   final currencyFormat = NumberFormat.currency(symbol: '', decimalDigits: 2);
   final sameFormat = NumberFormat.currency(symbol: '', decimalDigits: 0);
@@ -14,15 +15,27 @@ class CurrencyProvider extends ChangeNotifier {
   final ValueNotifier<String> result = ValueNotifier<String>("");
 
   bool isLoading = false;
-  CurrencyModel _currencyData = CurrencyModel();
-  CurrencyModel get currencyData => _currencyData;
+  CurrencyModel? _currencyData;
+  CurrencyModel? get currencyData => _currencyData;
+  String? errorMessage;
+  String? get errorMsg => errorMessage;
 
-  Future<CurrencyModel> getExchangeRate() async {
+  Future<Result<CurrencyModel>> getExchangeRate() async {
     isLoading = true;
+    result.value = '';
+    errorMessage = null;
     notifyListeners();
 
     final response = await _apiService.getLatestExchangeRate();
-    _currencyData = response;
+
+    {
+      if (response.isSuccess) {
+        _currencyData = response.data!;
+      } else {
+        errorMessage = response.error!;
+      }
+    }
+
     isLoading = false;
     notifyListeners();
     return response;
@@ -52,7 +65,7 @@ class CurrencyProvider extends ChangeNotifier {
         result.value = '';
         return;
       }
-      final rates = currencyData.data?.currencies as Map<Code, dynamic>;
+      final rates = currencyData?.data?.currencies as Map<Code, dynamic>;
 
       final fromRate = rates[fromCurrency].value;
       final toRate = rates[toCurrency].value;
