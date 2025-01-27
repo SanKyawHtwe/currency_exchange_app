@@ -1,14 +1,15 @@
 import 'package:currency_exchange_app/models/currency_model.dart';
 import 'package:currency_exchange_app/network/api_constants.dart';
+import 'package:currency_exchange_app/utils/result.dart';
 import 'package:dio/dio.dart';
 
 class ApiService {
   final Dio _dio = Dio(BaseOptions(
       baseUrl: kBaseUrl,
       connectTimeout: Duration(seconds: 5),
-      receiveTimeout: Duration(seconds: 3)));
+      receiveTimeout: Duration(seconds: 60)));
 
-  Future<CurrencyModel> getLatestExchangeRate() async {
+  Future<Result<CurrencyModel>> getLatestExchangeRate() async {
     try {
       final response = await _dio.get('/v3/latest', queryParameters: {
         'apikey': kApiKey,
@@ -16,18 +17,43 @@ class ApiService {
 
       var responseModel = CurrencyModel.fromJson(response.data);
 
-      return responseModel;
+      return Result.success(responseModel);
     } on DioException catch (e) {
       if (e.type == DioExceptionType.connectionTimeout) {
-        // Handle connection timeout
-        throw 'Connection timeout. Please try again later.';
+        return Result.error('Connection timeout. Please try again later.');
       } else {
-        // Handle other errors
-        throw 'Error fetching latest exchange rate: ${e.message}';
+        return Result.error("Something went wrong. Please try again.");
       }
     } catch (e) {
-      print('Error fetching latest exchange rate: $e');
-      throw 'An unexpected error occurred. Please try again later.';
+      return Result.error("Unexpected error: $e");
+    }
+  }
+
+  Future<Map<String, dynamic>> fetchExchangeRates({
+    required String startDate,
+    required String endDate,
+    String baseCurrency = 'USD',
+    List<String> symbols = const [
+      'THB',
+      'MMK',
+      'PHP',
+      'KHR',
+      'VND',
+      'SGD',
+      'LAK'
+    ],
+  }) async {
+    try {
+      String symbolsParam = symbols.join(',');
+      String url =
+          '$kHistoricalUrl/$startDate..$endDate?base=$baseCurrency&symbols=$symbolsParam';
+
+      Response response = await _dio.get(url);
+      return response.data;
+    } on DioException catch (e) {
+      throw Exception(e.toString());
+    } catch (e) {
+      throw Exception('Unexpected error occurred');
     }
   }
 }

@@ -40,17 +40,13 @@ class Data {
 
   Data({this.currencies});
 
-  factory Data.fromJson(Map<String, dynamic> json) {
+  factory Data.fromJson(Map<String, Currencies> mapData) {
     return Data(
       currencies: Map.fromEntries(
-        json.entries
-            .where((entry) =>
-                Code.values.any((e) => e.value == entry.key) &&
-                entry.value is Map<String, dynamic>)
-            .map((entry) => MapEntry(
-                  Code.values.firstWhere((e) => e.value == entry.key),
-                  Currencies.fromJson(entry.value as Map<String, dynamic>),
-                )),
+        mapData.entries.map((entry) => MapEntry(
+              Code.values.firstWhere((e) => e.value == entry.key),
+              entry.value,
+            )),
       ),
     );
   }
@@ -77,7 +73,6 @@ enum Code {
   SGD('SGD'),
   LAK('LAK');
 
-  /// The string representation of the currency code.
   const Code(this.value);
 
   final String value;
