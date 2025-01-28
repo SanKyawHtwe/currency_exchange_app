@@ -1,4 +1,3 @@
-import 'package:currency_exchange_app/pages/historical_rates_page.dart';
 import 'package:currency_exchange_app/pages/landing_page.dart';
 import 'package:currency_exchange_app/pages/profile_page.dart';
 import 'package:currency_exchange_app/pages/test_chart.dart';
