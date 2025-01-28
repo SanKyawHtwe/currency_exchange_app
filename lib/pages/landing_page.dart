@@ -168,70 +168,65 @@ class _BodyViewState extends State<_BodyView> {
             width: double.infinity,
             child: Padding(
               padding: const EdgeInsets.all(20),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Select currency",
-                      style: TextStyle(
-                          fontSize: 20,
-                          color: Theme.of(context).colorScheme.onSurface),
-                    ),
-                    SizedBox(
-                      height: 16,
-                    ),
-                    Expanded(
-                        child: ListView.builder(
-                            itemCount: Code.values.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return ListTile(
-                                leading: Flag.fromString(
-                                  flags[Code.values[index]] ?? 'US',
-                                  width: 24,
-                                  height: 24,
-                                  flagSize: FlagSize.size_1x1,
-                                ),
-                                title: Text(Code.values[index].value),
-                                onTap: () {
-                                  currencyProvider.toCurrency.value =
-                                      Code.values[index];
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    "Select currency",
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: Theme.of(context).colorScheme.onSurface),
+                  ),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  Expanded(
+                      child: ListView.builder(
+                          itemCount: Code.values.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return ListTile(
+                              leading: Flag.fromString(
+                                flags[Code.values[index]] ?? 'US',
+                                width: 24,
+                                height: 24,
+                                flagSize: FlagSize.size_1x1,
+                              ),
+                              title: Text(Code.values[index].value),
+                              onTap: () {
+                                currencyProvider.toCurrency.value =
+                                    Code.values[index];
 
-                                  currencyProvider.calculateResult(
-                                    inputAmount: _fromController.text,
-                                    fromCurrency:
-                                        currencyProvider.fromCurrency.value,
-                                    toCurrency:
-                                        currencyProvider.toCurrency.value,
-                                  );
-                                  Navigator.pop(context);
-                                },
-                              );
-                            })),
-                    Container(
-                      height: 48,
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      width: double.infinity,
-                      child: FilledButton(
-                          style: ButtonStyle(
-                              backgroundColor: WidgetStatePropertyAll(
-                                  Theme.of(context)
-                                      .colorScheme
-                                      .inverseSurface)),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text(
-                            "Cancel",
-                            style: TextStyle(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .surfaceContainer),
-                          )),
-                    )
-                  ],
-                ),
+                                currencyProvider.calculateResult(
+                                  inputAmount: _fromController.text,
+                                  fromCurrency:
+                                      currencyProvider.fromCurrency.value,
+                                  toCurrency: currencyProvider.toCurrency.value,
+                                );
+                                Navigator.pop(context);
+                              },
+                            );
+                          })),
+                  Container(
+                    height: 48,
+                    padding: EdgeInsets.symmetric(horizontal: 20),
+                    width: double.infinity,
+                    child: FilledButton(
+                        style: ButtonStyle(
+                            backgroundColor: WidgetStatePropertyAll(
+                                Theme.of(context).colorScheme.inverseSurface)),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          "Cancel",
+                          style: TextStyle(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surfaceContainer),
+                        )),
+                  )
+                ],
               ),
             ),
           );
