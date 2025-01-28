@@ -1,13 +1,18 @@
 import 'package:currency_exchange_app/models/currency_model.dart';
-import 'package:intl/intl.dart';
+import 'package:currency_exchange_app/network/api_constants.dart';
+import 'package:currency_exchange_app/utils/result.dart';
+import 'package:dio/dio.dart';
 
 class MockService {
-  Future<CurrencyModel> getLatestExchangeRate() async {
-    await Future.delayed(Duration(seconds: 2));
+  final Dio _dio = Dio(BaseOptions(
+      baseUrl: kBaseUrl,
+      connectTimeout: Duration(seconds: 60),
+      receiveTimeout: Duration(seconds: 60)));
+  Future<Result<CurrencyModel>> getLatestExchangeRate() async {
+    await Future.delayed(Duration(milliseconds: 500));
     final DateTime now = DateTime.now();
-    String formattedDate = DateFormat('MMM d, y – h:mm a').format(now);
-    return CurrencyModel(
-      meta: Meta(lastUpdatedAt: formattedDate),
+    return Result.success(CurrencyModel(
+      meta: Meta(lastUpdatedAt: now.toString()),
       data: Data(
         currencies: {
           Code.USD: Currencies(code: Code.USD, value: 1.0),
@@ -20,6 +25,34 @@ class MockService {
           Code.LAK: Currencies(code: Code.LAK, value: 21692.493544719),
         },
       ),
-    );
+    ));
+  }
+
+  Future<Map<String, dynamic>> fetchExchangeRates({
+    required String startDate,
+    required String endDate,
+    String baseCurrency = 'USD',
+    List<String> symbols = const [
+      'THB',
+      'MMK',
+      'PHP',
+      'KHR',
+      'VND',
+      'SGD',
+      'LAK'
+    ],
+  }) async {
+    try {
+      String symbolsParam = symbols.join(',');
+      String url =
+          '$kHistoricalUrl/$startDate..$endDate?base=$baseCurrency&symbols=$symbolsParam';
+
+      Response response = await _dio.get(url);
+      return response.data;
+    } on DioException catch (e) {
+      throw Exception(e.toString());
+    } catch (e) {
+      throw Exception('Unexpected error occurred');
+    }
   }
 }
