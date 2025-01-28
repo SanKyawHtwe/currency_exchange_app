@@ -6,7 +6,7 @@ import 'package:dio/dio.dart';
 class ApiService {
   final Dio _dio = Dio(BaseOptions(
       baseUrl: kBaseUrl,
-      connectTimeout: Duration(seconds: 5),
+      connectTimeout: Duration(seconds: 60),
       receiveTimeout: Duration(seconds: 60)));
 
   Future<Result<CurrencyModel>> getLatestExchangeRate() async {
@@ -32,17 +32,11 @@ class ApiService {
   Future<Map<String, dynamic>> fetchExchangeRates({
     required String startDate,
     required String endDate,
-    String baseCurrency = 'USD',
-    List<String> symbols = const [
-      'THB',
-      'MMK',
-      'PHP',
-      'KHR',
-      'VND',
-      'SGD',
-      'LAK'
-    ],
+    required String baseCurrency,
   }) async {
+    List<String> symbols = Code.values.map((code) {
+      return code.value;
+    }).toList();
     try {
       String symbolsParam = symbols.join(',');
       String url =
