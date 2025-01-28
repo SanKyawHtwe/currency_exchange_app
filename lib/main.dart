@@ -1,4 +1,3 @@
-import 'package:currency_exchange_app/pages/main_page.dart';
 import 'package:currency_exchange_app/pages/onboarding_page.dart';
 import 'package:currency_exchange_app/providers/currency_provider.dart';
 import 'package:currency_exchange_app/utils/colors.dart';
