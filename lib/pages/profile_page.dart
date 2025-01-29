@@ -1,5 +1,4 @@
 import 'package:currency_exchange_app/pages/onboarding_page.dart';
-import 'package:currency_exchange_app/utils/colors.dart';
 import 'package:currency_exchange_app/utils/dimens.dart';
 import 'package:currency_exchange_app/utils/images.dart';
 import 'package:flutter/cupertino.dart';
