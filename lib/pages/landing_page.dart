@@ -15,15 +15,15 @@ class LandingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.transparent,
         extendBodyBehindAppBar: true,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           title: Text("CURRENCY EXCHANGE"),
           titleTextStyle: TextStyle(
               fontWeight: FontWeight.bold,
-              fontSize: 24,
-              fontStyle: FontStyle.italic,
-              color: Theme.of(context).colorScheme.onSurfaceVariant),
+              fontSize: kTitleFontSize,
+              color: Theme.of(context).colorScheme.onSurface),
         ),
         body: _BodyView());
   }
@@ -81,7 +81,9 @@ class _BodyViewState extends State<_BodyView> {
                     colors: [kCardGradient1, kCardGradient2, kCardGradient3],
                     radius: 3,
                     center: Alignment(-2, -1)),
-                borderRadius: BorderRadius.circular(20)),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20))),
             width: double.infinity,
             child: Padding(
               padding: const EdgeInsets.all(20),
@@ -160,7 +162,9 @@ class _BodyViewState extends State<_BodyView> {
                     colors: [kCardGradient1, kCardGradient2, kCardGradient3],
                     radius: 3,
                     center: Alignment(-2, -1)),
-                borderRadius: BorderRadius.circular(20)),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20))),
             width: double.infinity,
             child: Padding(
               padding: const EdgeInsets.all(20),
@@ -232,55 +236,139 @@ class _BodyViewState extends State<_BodyView> {
 
     // Body view
 
-    return
-        // Column(
-        //   children: [
-        //     currencyProvider.errorMessage != null
-        //         ? buildErrorScreen('${currencyProvider.errorMessage}')
-        //         : SizedBox.shrink(),
-        //     currencyProvider.isLoading
-        //         ? CircularProgressIndicator()
-        //         : SizedBox.shrink(),
-        //     currencyProvider.currencyData != null
-        //         ? Expanded(
-        // child:
-        Container(
-      decoration: BoxDecoration(
-          gradient: RadialGradient(
-              colors: [kCardGradient1, kCardGradient2, kCardGradient3],
-              radius: 3,
-              center: Alignment(-1, -1))),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: currencyProvider.isLoading
-            ? Center(
-                child: CustomProgressIndicator(),
-              )
-            : SizedBox(
-                child: currencyProvider.errorMessage != null
-                    ? buildErrorScreen('${currencyProvider.errorMessage}')
-                    : Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Row(
+    return SingleChildScrollView(
+      child: Container(
+        width: double.infinity,
+        constraints: BoxConstraints(
+          minHeight: MediaQuery.of(context).size.height,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: currencyProvider.isLoading
+              ? Center(
+                  child: CustomProgressIndicator(),
+                )
+              : SafeArea(
+                  child: currencyProvider.errorMessage != null
+                      ? buildErrorScreen('${currencyProvider.errorMessage}')
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Column(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                // Input currency TextField
-                                Expanded(
-                                  flex: 5,
-                                  child: TextField(
-                                    autofocus: false,
-                                    controller: _fromController,
-                                    maxLength: 14,
-                                    style: TextStyle(
-                                        fontSize: kCurrencyFontSize,
-                                        overflow: TextOverflow.visible),
-                                    textInputAction: TextInputAction.done,
-                                    onChanged: (String? value) {
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      // Input currency TextField
+                                      Expanded(
+                                        flex: 5,
+                                        child: TextField(
+                                          autofocus: false,
+                                          controller: _fromController,
+                                          maxLength: 14,
+                                          style: TextStyle(
+                                              fontSize: kCurrencyFontSize,
+                                              overflow: TextOverflow.visible),
+                                          textInputAction: TextInputAction.done,
+                                          onChanged: (String? value) {
+                                            currencyProvider.calculateResult(
+                                              inputAmount: _fromController.text,
+                                              fromCurrency: currencyProvider
+                                                  .fromCurrency.value,
+                                              toCurrency: currencyProvider
+                                                  .toCurrency.value,
+                                            );
+                                          },
+                                          decoration: InputDecoration(
+                                              label: Row(
+                                                children: [
+                                                  Icon(
+                                                      size: 18,
+                                                      CupertinoIcons
+                                                          .arrow_up_right),
+                                                  SizedBox(width: 8),
+                                                  Text("Enter Amount"),
+                                                ],
+                                              ),
+                                              labelStyle: TextStyle(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onSurface),
+                                              border: InputBorder.none,
+                                              filled: false,
+                                              counterText: "",
+                                              enabled:
+                                                  !currencyProvider.isLoading,
+                                              hintText: "From"),
+                                          keyboardType: TextInputType.number,
+                                        ),
+                                      ),
+
+                                      SizedBox(
+                                        width: 8,
+                                      ),
+                                      // Input currency DropDownMenu
+
+                                      Expanded(
+                                        flex: 2,
+                                        child: ValueListenableBuilder(
+                                            valueListenable:
+                                                currencyProvider.fromCurrency,
+                                            builder: (BuildContext context,
+                                                Code code, child) {
+                                              return InkWell(
+                                                onTap: showFromBottomSheet,
+                                                child: Row(
+                                                  children: [
+                                                    Expanded(
+                                                      child: Flag.fromString(
+                                                        flags[code] ?? 'US',
+                                                        width: 24,
+                                                        height: 24,
+                                                        flagSize:
+                                                            FlagSize.size_1x1,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(
+                                                      width: 8,
+                                                    ),
+                                                    Text(code.value),
+                                                    const SizedBox(
+                                                      width: 8,
+                                                    ),
+                                                    Expanded(
+                                                        child: Icon(Icons
+                                                            .arrow_drop_down))
+                                                  ],
+                                                ),
+                                              );
+                                            }),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 16,
+                                ),
+                                // Swap currencies Button
+                                Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 16),
+                                  width: double.infinity,
+                                  child: FilledButton.icon(
+                                    style: ButtonStyle(
+                                        backgroundColor: WidgetStatePropertyAll(
+                                            Theme.of(context)
+                                                .colorScheme
+                                                .inverseSurface)),
+                                    onPressed: () {
+                                      currencyProvider.swapCurrencies();
                                       currencyProvider.calculateResult(
                                         inputAmount: _fromController.text,
                                         fromCurrency:
@@ -289,244 +377,157 @@ class _BodyViewState extends State<_BodyView> {
                                             currencyProvider.toCurrency.value,
                                       );
                                     },
-                                    decoration: InputDecoration(
-                                        label: Row(
-                                          children: [
-                                            Icon(
-                                                size: 18,
-                                                CupertinoIcons.arrow_up_right),
-                                            SizedBox(width: 8),
-                                            Text("Enter Amount"),
-                                          ],
-                                        ),
-                                        labelStyle: TextStyle(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSurface),
-                                        border: InputBorder.none,
-                                        filled: false,
-                                        counterText: "",
-                                        enabled: !currencyProvider.isLoading,
-                                        hintText: "From"),
-                                    keyboardType: TextInputType.number,
-                                  ),
-                                ),
-
-                                SizedBox(
-                                  width: 8,
-                                ),
-                                // Input currency DropDownMenu
-
-                                Expanded(
-                                  flex: 2,
-                                  child: ValueListenableBuilder(
-                                      valueListenable:
-                                          currencyProvider.fromCurrency,
-                                      builder: (BuildContext context, Code code,
-                                          child) {
-                                        return InkWell(
-                                          onTap: showFromBottomSheet,
-                                          child: Row(
-                                            children: [
-                                              Expanded(
-                                                child: Flag.fromString(
-                                                  flags[code] ?? 'US',
-                                                  width: 24,
-                                                  height: 24,
-                                                  flagSize: FlagSize.size_1x1,
-                                                ),
-                                              ),
-                                              const SizedBox(
-                                                width: 8,
-                                              ),
-                                              Text(code.value),
-                                              const SizedBox(
-                                                width: 8,
-                                              ),
-                                              Expanded(
-                                                  child: Icon(
-                                                      Icons.arrow_drop_down))
-                                            ],
-                                          ),
-                                        );
-                                      }),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 16,
-                          ),
-
-                          // Swap currencies Button
-
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: 16),
-                            width: double.infinity,
-                            child: FilledButton.icon(
-                              style: ButtonStyle(
-                                  backgroundColor: WidgetStatePropertyAll(
-                                      Theme.of(context)
-                                          .colorScheme
-                                          .inverseSurface)),
-                              onPressed: () {
-                                currencyProvider.swapCurrencies();
-                                currencyProvider.calculateResult(
-                                  inputAmount: _fromController.text,
-                                  fromCurrency:
-                                      currencyProvider.fromCurrency.value,
-                                  toCurrency: currencyProvider.toCurrency.value,
-                                );
-                              },
-                              label: Text(''),
-                              icon: Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 18, bottom: 18, left: 68, right: 60),
-                                child: Icon(
-                                  CupertinoIcons.arrow_up_arrow_down,
-                                  color: Theme.of(context).colorScheme.surface,
-                                ),
-                              ),
-                              // iconSize: 16,
-                            ),
-                          ),
-
-                          const SizedBox(
-                            height: 16,
-                          ),
-
-                          Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Row(
-                              // mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                // Output currency read only TextField
-
-                                Expanded(
-                                  flex: 5,
-                                  child: ValueListenableBuilder(
-                                      valueListenable: currencyProvider.result,
-                                      builder: (BuildContext context,
-                                          String value, child) {
-                                        return TextField(
-                                          readOnly: true,
-                                          style: TextStyle(
-                                            fontSize: kCurrencyFontSize,
-                                          ),
-                                          controller: TextEditingController(
-                                              text: value),
-                                          decoration: InputDecoration(
-                                              label: Row(
-                                                children: [
-                                                  Icon(
-                                                      size: 18,
-                                                      CupertinoIcons
-                                                          .arrow_down_left),
-                                                  const SizedBox(
-                                                    width: 8,
-                                                  ),
-                                                  Text("You receive"),
-                                                ],
-                                              ),
-                                              labelStyle: TextStyle(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .onSurface,
-                                              ),
-                                              border: InputBorder.none,
-                                              filled: false,
-                                              fillColor: Theme.of(context)
-                                                  .colorScheme
-                                                  .surfaceContainer,
-                                              enabled:
-                                                  !currencyProvider.isLoading,
-                                              hintText: "To"),
-                                          keyboardType: TextInputType.number,
-                                        );
-                                      }),
-                                ),
-                                const SizedBox(
-                                  width: 8,
-                                ),
-                                // Output currency DropDownMenu
-
-                                Expanded(
-                                  flex: 2,
-                                  child: ValueListenableBuilder(
-                                      valueListenable:
-                                          currencyProvider.toCurrency,
-                                      builder: (BuildContext context, Code code,
-                                          child) {
-                                        return InkWell(
-                                          onTap: showToBottomSheet,
-                                          child: Row(
-                                            children: [
-                                              Expanded(
-                                                child: Flag.fromString(
-                                                  flags[code] ?? 'US',
-                                                  width: 24,
-                                                  height: 24,
-                                                  flagSize: FlagSize.size_1x1,
-                                                ),
-                                              ),
-                                              const SizedBox(
-                                                width: 8,
-                                              ),
-                                              Text(code.value),
-                                              const SizedBox(
-                                                width: 8,
-                                              ),
-                                              Expanded(
-                                                  child: Icon(
-                                                      Icons.arrow_drop_down))
-                                            ],
-                                          ),
-                                        );
-                                      }),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 30,
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  textAlign: TextAlign.center,
-                                  "Last updated at :",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color:
-                                        Theme.of(context).colorScheme.onSurface,
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: Text(lastUpdatedDate,
-                                    style: TextStyle(
-                                        fontSize: 14,
+                                    label: Text(''),
+                                    icon: Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 18,
+                                          bottom: 18,
+                                          left: 68,
+                                          right: 60),
+                                      child: Icon(
+                                        CupertinoIcons.arrow_up_arrow_down,
                                         color: Theme.of(context)
                                             .colorScheme
-                                            .onSurface)),
-                              )
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 16,
-                          ),
-                        ],
-                      ),
-              ),
+                                            .surface,
+                                      ),
+                                    ),
+                                    // iconSize: 16,
+                                  ),
+                                ),
+
+                                const SizedBox(
+                                  height: 16,
+                                ),
+
+                                Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Row(
+                                    // mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      // Output currency read only TextField
+
+                                      Expanded(
+                                        flex: 5,
+                                        child: ValueListenableBuilder(
+                                            valueListenable:
+                                                currencyProvider.result,
+                                            builder: (BuildContext context,
+                                                String value, child) {
+                                              return TextField(
+                                                readOnly: true,
+                                                style: TextStyle(
+                                                  fontSize: kCurrencyFontSize,
+                                                ),
+                                                controller:
+                                                    TextEditingController(
+                                                        text: value),
+                                                decoration: InputDecoration(
+                                                    label: Row(
+                                                      children: [
+                                                        Icon(
+                                                            size: 18,
+                                                            CupertinoIcons
+                                                                .arrow_down_left),
+                                                        const SizedBox(
+                                                          width: 8,
+                                                        ),
+                                                        Text("You receive"),
+                                                      ],
+                                                    ),
+                                                    labelStyle: TextStyle(
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .onSurface,
+                                                    ),
+                                                    border: InputBorder.none,
+                                                    filled: false,
+                                                    fillColor: Theme.of(context)
+                                                        .colorScheme
+                                                        .surfaceContainer,
+                                                    enabled: !currencyProvider
+                                                        .isLoading,
+                                                    hintText: "To"),
+                                                keyboardType:
+                                                    TextInputType.number,
+                                              );
+                                            }),
+                                      ),
+                                      const SizedBox(
+                                        width: 8,
+                                      ),
+                                      // Output currency DropDownMenu
+
+                                      Expanded(
+                                        flex: 2,
+                                        child: ValueListenableBuilder(
+                                            valueListenable:
+                                                currencyProvider.toCurrency,
+                                            builder: (BuildContext context,
+                                                Code code, child) {
+                                              return InkWell(
+                                                onTap: showToBottomSheet,
+                                                child: Row(
+                                                  children: [
+                                                    Expanded(
+                                                      child: Flag.fromString(
+                                                        flags[code] ?? 'US',
+                                                        width: 24,
+                                                        height: 24,
+                                                        flagSize:
+                                                            FlagSize.size_1x1,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(
+                                                      width: 8,
+                                                    ),
+                                                    Text(code.value),
+                                                    const SizedBox(
+                                                      width: 8,
+                                                    ),
+                                                    Expanded(
+                                                        child: Icon(Icons
+                                                            .arrow_drop_down))
+                                                  ],
+                                                ),
+                                              );
+                                            }),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    textAlign: TextAlign.center,
+                                    "Last updated at :",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface,
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Text(lastUpdatedDate,
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface)),
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
+                ),
+        ),
       ),
     );
-
-    // : SizedBox.shrink(),
-    // ],
-    // );
   }
 
   Widget buildErrorScreen(String message) {
