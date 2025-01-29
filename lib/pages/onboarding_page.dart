@@ -37,7 +37,7 @@ class OnboardingPage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         Text(
-                          "CurrenC",
+                          "EzRate",
                           style: TextStyle(
                               color: Theme.of(context).colorScheme.onSurface,
                               fontSize: kTitleFontSize,
@@ -52,11 +52,12 @@ class OnboardingPage extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  "Best way to track exchange rates!",
+                  textAlign: TextAlign.center,
+                  "A fast, easy way to exchange currencies at your fingertips",
                   style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurface,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold),
+                    color: Theme.of(context).colorScheme.onSurface,
+                    fontSize: 16,
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
