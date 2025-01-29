@@ -2,7 +2,7 @@ import 'package:currency_exchange_app/models/currency_model.dart';
 import 'package:currency_exchange_app/network/api_service.dart';
 import 'package:currency_exchange_app/utils/colors.dart';
 import 'package:currency_exchange_app/utils/custom_progress_indicator.dart';
-
+import 'package:currency_exchange_app/utils/dimens.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
@@ -65,182 +65,133 @@ class _HistoricalRatesChartState extends State<HistoricalRatesChart> {
     return spots;
   }
 
-  Widget buildCurrencyChart(String currency) {
+  Widget buildCurrencyChart(
+      {required String baseCurrency, required String currency}) {
     List<FlSpot> spots = _getYearlySpots(currency);
 
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          Text(
-            '$currency Exchange Rate per Year',
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          Spacer(),
-          spots.isEmpty
-              ? Center(
-                  child: Text("Data not found"),
-                )
-              : AspectRatio(
-                  aspectRatio: 4 / 3,
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: LineChart(
-                      LineChartData(
-                        clipData: FlClipData.all(),
-                        borderData: FlBorderData(show: true),
-                        titlesData: FlTitlesData(
-                          rightTitles: AxisTitles(
-                              sideTitles: SideTitles(showTitles: false)),
-                          topTitles: AxisTitles(
-                              sideTitles: SideTitles(showTitles: false)),
-                          leftTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                              interval: 1,
-                              showTitles: true,
-                              reservedSize: 40,
-                              getTitlesWidget: (value, meta) {
-                                return Text(
-                                  value.toStringAsFixed(2),
-                                  style: const TextStyle(
-                                    fontSize: 10,
-                                  ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        Text(
+          '$baseCurrency to $currency exchange rate per year',
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        Spacer(),
+        spots.isEmpty
+            ? Center(
+                child: Text("Data not found"),
+              )
+            : AspectRatio(
+                aspectRatio: 4 / 3,
+                child: SizedBox(
+                  width: double.infinity,
+                  child: LineChart(
+                    LineChartData(
+                      clipData: FlClipData.all(),
+                      borderData: FlBorderData(show: true),
+                      titlesData: FlTitlesData(
+                        rightTitles: AxisTitles(
+                            sideTitles: SideTitles(showTitles: false)),
+                        topTitles: AxisTitles(
+                            sideTitles: SideTitles(showTitles: false)),
+                        leftTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            interval: 1,
+                            showTitles: true,
+                            reservedSize: 40,
+                            getTitlesWidget: (value, meta) {
+                              return Text(
+                                value.toStringAsFixed(2),
+                                style: const TextStyle(
+                                  fontSize: 10,
+                                ),
+                              );
+                            },
+                          ),
+                          axisNameWidget: const Text('Rate',
+                              style: TextStyle(fontSize: 14)),
+                        ),
+                        bottomTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            reservedSize: 20,
+                            interval: 1,
+                            getTitlesWidget: (value, meta) {
+                              return Text(
+                                value.toInt().toString(),
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                ),
+                              );
+                            },
+                          ),
+                          axisNameWidget: const Text('Year',
+                              style: TextStyle(fontSize: 14)),
+                        ),
+                      ),
+                      lineBarsData: [
+                        LineChartBarData(
+                          preventCurveOverShooting: true,
+                          isCurved: true,
+                          isStrokeJoinRound: true,
+                          spots: spots,
+                          isStrokeCapRound: true,
+                          barWidth: 3,
+                          color: kPrimaryColor,
+                          dotData: FlDotData(show: true),
+                          belowBarData: BarAreaData(show: true),
+                        ),
+                      ],
+                      gridData: FlGridData(
+                        show: true,
+                        drawHorizontalLine: true,
+                        drawVerticalLine: true,
+                        horizontalInterval: 1,
+                        verticalInterval: 1,
+                        getDrawingHorizontalLine: (value) {
+                          return FlLine(
+                            color: Colors.grey,
+                            strokeWidth: 1,
+                          );
+                        },
+                      ),
+                      // Tooltip data
+                      lineTouchData: LineTouchData(
+                        touchTooltipData: LineTouchTooltipData(
+                            fitInsideHorizontally: true,
+                            fitInsideVertically: true,
+                            getTooltipItems:
+                                (List<LineBarSpot> touchedBarSpots) {
+                              return touchedBarSpots.map((touchedBarSpot) {
+                                return LineTooltipItem(
+                                  'Year: ${touchedBarSpot.x.toInt()} - Rate: ${touchedBarSpot.y.toStringAsFixed(2)}',
+                                  const TextStyle(),
                                 );
-                              },
-                            ),
-                            axisNameWidget: const Text('Rate',
-                                style: TextStyle(fontSize: 14)),
-                          ),
-                          bottomTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                              showTitles: true,
-                              reservedSize: 20,
-                              interval: 1,
-                              getTitlesWidget: (value, meta) {
-                                return Text(
-                                  value.toInt().toString(),
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                  ),
-                                );
-                              },
-                            ),
-                            axisNameWidget: const Text('Year',
-                                style: TextStyle(fontSize: 14)),
-                          ),
-                        ),
-                        lineBarsData: [
-                          LineChartBarData(
-                            preventCurveOverShooting: true,
-                            isCurved: true,
-                            isStrokeJoinRound: true,
-                            spots: spots,
-                            isStrokeCapRound: true,
-                            barWidth: 3,
-                            color: kPrimaryColor,
-                            dotData: FlDotData(show: true),
-                            belowBarData: BarAreaData(show: true),
-                          ),
-                        ],
-                        gridData: FlGridData(
-                          show: true,
-                          drawHorizontalLine: true,
-                          drawVerticalLine: true,
-                          horizontalInterval: 1,
-                          verticalInterval: 1,
-                          getDrawingHorizontalLine: (value) {
-                            return FlLine(
-                              color: Colors.grey,
-                              strokeWidth: 1,
-                            );
-                          },
-                        ),
-                        // Tooltip data
-                        lineTouchData: LineTouchData(
-                          touchTooltipData: LineTouchTooltipData(
-                              fitInsideHorizontally: true,
-                              fitInsideVertically: true,
-                              getTooltipItems:
-                                  (List<LineBarSpot> touchedBarSpots) {
-                                return touchedBarSpots.map((touchedBarSpot) {
-                                  return LineTooltipItem(
-                                    'Year: ${touchedBarSpot.x.toInt()} - Rate: ${touchedBarSpot.y.toStringAsFixed(2)}',
-                                    const TextStyle(),
-                                  );
-                                }).toList();
-                              }),
-                          handleBuiltInTouches: true,
-                        ),
+                              }).toList();
+                            }),
+                        handleBuiltInTouches: true,
                       ),
                     ),
                   ),
                 ),
-          Spacer()
-        ],
-      ),
+              ),
+        Spacer()
+      ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.transparent,
         extendBodyBehindAppBar: true,
         body: Container(
-            decoration: BoxDecoration(
-              gradient: RadialGradient(
-                  colors: [kCardGradient1, kCardGradient2, kCardGradient3],
-                  radius: 3,
-                  center: Alignment(-2, -1)),
-            ),
             child: _isLoading
                 ? Center(child: CustomProgressIndicator())
                 : _errorMessage != null
                     ? Center(child: Text('Error: $_errorMessage'))
-                    :
-                    // Container(
-                    //     color: Colors.transparent,
-                    //     child: Padding(
-                    //       padding: const EdgeInsets.all(16.0),
-                    //       child: ListView(
-                    //         children: [
-                    //           buildCurrencyChart('PHP', Colors.blue),
-                    //           buildCurrencyChart('THB', Colors.green),
-                    //           buildCurrencyChart('SGD', Colors.red),
-                    //         ],
-                    //       ),
-                    //     ),
-                    //   ),
-
-                    // DefaultTabController(
-                    //     initialIndex: 0,
-                    //     length: Code.values.length,
-                    //     child: Column(
-                    //       children: [
-                    //         TabBar(tabs: [
-                    //           Tab(
-                    //             icon: Flag.fromString('US'),
-                    //           ),
-                    //           Tab(
-                    //             icon: Flag.fromString('US'),
-                    //           ),
-                    //           Tab(
-                    //             icon: Flag.fromString('US'),
-                    //           )
-                    //         ]),
-                    //         TabBarView(
-                    //           children: [
-                    //             buildCurrencyChart('PHP', Colors.blue),
-                    //             buildCurrencyChart('THB', Colors.green),
-                    //             buildCurrencyChart('SGD', Colors.red),
-                    //           ],
-                    //         ),
-                    //       ],
-                    //     ),
-                    //   ),
-                    Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 20),
+                    : SafeArea(
                         child: DefaultTabController(
                           initialIndex: 1,
                           length: Code.values.length,
@@ -251,11 +202,9 @@ class _HistoricalRatesChartState extends State<HistoricalRatesChart> {
                               title: Text('Exchange Rate Chart per Year'),
                               titleTextStyle: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 24,
-                                  fontStyle: FontStyle.italic,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onSurfaceVariant),
+                                  fontSize: kTitleFontSize,
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface),
                               bottom: TabBar(
                                 tabAlignment: TabAlignment.start,
                                 isScrollable: true,
@@ -268,7 +217,11 @@ class _HistoricalRatesChartState extends State<HistoricalRatesChart> {
                             ),
                             body: TabBarView(
                               children: Code.values.map((code) {
-                                return buildCurrencyChart(code.value);
+                                return Padding(
+                                    padding: EdgeInsets.all(20),
+                                    child: buildCurrencyChart(
+                                        baseCurrency: 'USD',
+                                        currency: code.value));
                               }).toList(),
                             ),
                           ),

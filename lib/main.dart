@@ -23,7 +23,16 @@ class MyApp extends StatelessWidget {
                 seedColor: kPrimaryColor, brightness: Brightness.light),
             useMaterial3: true,
             fontFamily: kPoppins),
-        home: const OnboardingPage(),
+        home: Scaffold(
+            body: Container(
+                decoration: BoxDecoration(
+                    gradient: RadialGradient(colors: [
+                      kCardGradient1,
+                      kCardGradient2,
+                      kCardGradient3
+                    ], radius: 3, center: Alignment(-2, -1)),
+                    borderRadius: BorderRadius.circular(20)),
+                child: OnboardingPage())),
         debugShowCheckedModeBanner: false,
       ),
     );

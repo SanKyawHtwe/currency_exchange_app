@@ -23,31 +23,30 @@ class _MainPageState extends State<MainPage> {
   ];
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-          gradient: RadialGradient(
-              colors: [kCardGradient1, kCardGradient2, kCardGradient3],
-              radius: 3,
-              center: Alignment(-1, -1))),
-      child: Scaffold(
-        // extendBody: true,
-        body: screenWidgets[currentIndex],
-        bottomNavigationBar: NavigationBar(
-            indicatorShape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
-            elevation: 2,
-            height: 58,
-            labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-            backgroundColor: Theme.of(context).colorScheme.inverseSurface,
-            indicatorColor: Theme.of(context).colorScheme.surface,
-            selectedIndex: currentIndex,
-            onDestinationSelected: (selectedIndex) {
-              setState(() {
-                currentIndex = selectedIndex;
-              });
-            },
-            destinations: _getBottomNavigationItem()),
-      ),
+    return Scaffold(
+      body: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+              gradient: RadialGradient(
+                  colors: [kCardGradient1, kCardGradient2, kCardGradient3],
+                  radius: 3,
+                  center: Alignment(-1, -1))),
+          child: screenWidgets[currentIndex]),
+      bottomNavigationBar: NavigationBar(
+          indicatorShape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+          elevation: 2,
+          height: 58,
+          labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+          backgroundColor: Theme.of(context).colorScheme.inverseSurface,
+          indicatorColor: Theme.of(context).colorScheme.surface,
+          selectedIndex: currentIndex,
+          onDestinationSelected: (selectedIndex) {
+            setState(() {
+              currentIndex = selectedIndex;
+            });
+          },
+          destinations: _getBottomNavigationItem()),
     );
   }
 
