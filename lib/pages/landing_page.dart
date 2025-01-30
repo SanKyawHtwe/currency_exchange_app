@@ -3,6 +3,7 @@ import 'package:currency_exchange_app/providers/currency_provider.dart';
 import 'package:currency_exchange_app/utils/colors.dart';
 import 'package:currency_exchange_app/utils/custom_progress_indicator.dart';
 import 'package:currency_exchange_app/utils/dimens.dart';
+import 'package:currency_exchange_app/utils/string.dart';
 import 'package:flag/flag.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,7 @@ class LandingPage extends StatelessWidget {
         extendBodyBehindAppBar: true,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
-          title: Text("CURRENCY EXCHANGE"),
+          title: Text(kLandingPageTitle),
           titleTextStyle: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: kTitleFontSize,
@@ -92,7 +93,7 @@ class _BodyViewState extends State<_BodyView> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    "Select currency",
+                    kBottomSheetTitle,
                     style: TextStyle(
                         fontSize: 20,
                         color: Theme.of(context).colorScheme.onSurface),
@@ -173,7 +174,7 @@ class _BodyViewState extends State<_BodyView> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    "Select currency",
+                    kBottomSheetTitle,
                     style: TextStyle(
                         fontSize: 20,
                         color: Theme.of(context).colorScheme.onSurface),
@@ -219,7 +220,7 @@ class _BodyViewState extends State<_BodyView> {
                           Navigator.pop(context);
                         },
                         child: Text(
-                          "Cancel",
+                          kBottomSheetCancelText,
                           style: TextStyle(
                               color: Theme.of(context)
                                   .colorScheme
@@ -294,7 +295,7 @@ class _BodyViewState extends State<_BodyView> {
                                                       CupertinoIcons
                                                           .arrow_up_right),
                                                   SizedBox(width: 8),
-                                                  Text("Enter Amount"),
+                                                  Text(kInputCurrencyText),
                                                 ],
                                               ),
                                               labelStyle: TextStyle(
@@ -306,7 +307,7 @@ class _BodyViewState extends State<_BodyView> {
                                               counterText: "",
                                               enabled:
                                                   !currencyProvider.isLoading,
-                                              hintText: "From"),
+                                              hintText: kInputCurrencyHintText),
                                           keyboardType: TextInputType.number,
                                         ),
                                       ),
@@ -431,7 +432,8 @@ class _BodyViewState extends State<_BodyView> {
                                                         const SizedBox(
                                                           width: 8,
                                                         ),
-                                                        Text("You receive"),
+                                                        Text(
+                                                            kOutputCurrencyText),
                                                       ],
                                                     ),
                                                     labelStyle: TextStyle(
@@ -446,7 +448,8 @@ class _BodyViewState extends State<_BodyView> {
                                                         .surfaceContainer,
                                                     enabled: !currencyProvider
                                                         .isLoading,
-                                                    hintText: "To"),
+                                                    hintText:
+                                                        kOutputCurrencyHintText),
                                                 keyboardType:
                                                     TextInputType.number,
                                               );
@@ -503,7 +506,7 @@ class _BodyViewState extends State<_BodyView> {
                                 Expanded(
                                   child: Text(
                                     textAlign: TextAlign.center,
-                                    "Last updated at :",
+                                    kLastUpdatedAtText,
                                     style: TextStyle(
                                       fontSize: 14,
                                       color: Theme.of(context)
@@ -553,7 +556,7 @@ class _BodyViewState extends State<_BodyView> {
               Provider.of<CurrencyProvider>(context, listen: false)
                   .getExchangeRate();
             },
-            child: Text("Retry",
+            child: Text(kRetryButtonText,
                 style: TextStyle(
                     color: Theme.of(context).colorScheme.surfaceContainer)),
           )
