@@ -21,6 +21,7 @@ class LandingPage extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           title: Text(kLandingPageTitle),
+          centerTitle: true,
           titleTextStyle: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: kTitleFontSize,

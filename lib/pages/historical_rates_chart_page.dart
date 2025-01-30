@@ -244,6 +244,7 @@ class _HistoricalRatesChartState extends State<HistoricalRatesChart> {
                             appBar: AppBar(
                               backgroundColor: Colors.transparent,
                               title: Text(kHistoricalRatePageTitle),
+                              centerTitle: true,
                               titleTextStyle: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: kTitleFontSize,
