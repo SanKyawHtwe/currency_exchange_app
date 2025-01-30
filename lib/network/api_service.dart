@@ -20,7 +20,7 @@ class ApiService {
       return Result.success(responseModel);
     } on DioException catch (e) {
       if (e.type == DioExceptionType.connectionTimeout) {
-        return Result.error('Connection timeout. Please try again later.');
+        return Result.error('Connection timeout. Please try again.');
       } else {
         return Result.error("Something went wrong. Please try again.");
       }
@@ -45,7 +45,11 @@ class ApiService {
       Response response = await _dio.get(url);
       return response.data;
     } on DioException catch (e) {
-      throw Exception(e.toString());
+      if (e.type == DioExceptionType.connectionError) {
+        throw Exception("Connection error");
+      } else {
+        throw Exception(e.message);
+      }
     } catch (e) {
       throw Exception('Unexpected error occurred');
     }

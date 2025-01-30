@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
                     ], radius: 3, center: Alignment(-2, -1)),
                     borderRadius: BorderRadius.circular(20)),
                 child: OnboardingPage())),
-        debugShowCheckedModeBanner: false,
+        debugShowCheckedModeBanner: true,
       ),
     );
   }
