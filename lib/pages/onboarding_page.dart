@@ -69,6 +69,7 @@ class OnboardingPage extends StatelessWidget {
                             onPressed: () {
                               ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
+                                      duration: Duration(milliseconds: 1000),
                                       content: Text(kLoginUnavailableText)));
                             },
                             style: ButtonStyle(
