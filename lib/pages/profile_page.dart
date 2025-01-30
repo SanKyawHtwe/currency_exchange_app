@@ -15,8 +15,9 @@ class ProfilePage extends StatelessWidget {
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
+          centerTitle: true,
           title: Text(
-            "Profile",
+            kProfilePageTitle,
             style: TextStyle(
                 fontSize: kTitleFontSize, fontWeight: FontWeight.bold),
           ),
@@ -41,7 +42,7 @@ class ProfilePage extends StatelessWidget {
                       height: 16,
                     ),
                     Text(
-                      "Guest User",
+                      kUserName,
                       style: TextStyle(
                           fontSize: 20,
                           color: Theme.of(context).colorScheme.onSurface),
@@ -51,12 +52,11 @@ class ProfilePage extends StatelessWidget {
                     ),
                     OutlinedButton(
                         onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text(
-                                  "Log in feature is currently unavailable")));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(kLoginErrorText)));
                         },
                         child: Text(
-                          "Log In",
+                          kLoginButtonText,
                           style: TextStyle(
                               color: Theme.of(context).colorScheme.onSurface),
                         ))

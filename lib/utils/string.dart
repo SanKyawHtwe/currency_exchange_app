@@ -22,4 +22,7 @@ const kHistoricalRatePageTitle = 'Exchange Rate Chart per Year';
 const kBookmarkErrorText = "Bookmark feature not available for guest mode!";
 const kEditProfileErrorText = "Can't edit profile!";
 const kMyProfileText = "My Profile";
+const kLoginErrorText = "Log in feature is currently unavailable";
 const kBookmarkedRatesText = "Bookmarked rates";
+const kUserName = 'Guest User';
+const kProfilePageTitle = "Profile";
