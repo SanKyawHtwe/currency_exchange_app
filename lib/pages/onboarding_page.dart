@@ -37,7 +37,7 @@ class OnboardingPage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         Text(
-                          "EzRate",
+                          kAppName,
                           style: TextStyle(
                               color: Theme.of(context).colorScheme.onSurface,
                               fontSize: kTitleFontSize,
@@ -53,7 +53,7 @@ class OnboardingPage extends StatelessWidget {
                 ),
                 Text(
                   textAlign: TextAlign.center,
-                  "A fast, easy way to exchange currencies at your fingertips",
+                  kOnboardingText,
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 16,
@@ -67,14 +67,14 @@ class OnboardingPage extends StatelessWidget {
                           width: double.infinity,
                           child: FilledButton(
                             onPressed: () {
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                  content: Text(
-                                      "Log in feature is currently unavailable")));
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text(kLoginUnavailableText)));
                             },
                             style: ButtonStyle(
                                 backgroundColor: WidgetStatePropertyAll(
                                     Theme.of(context).colorScheme.primary)),
-                            child: Text("Log In"),
+                            child: Text(kLoginButtonText),
                           )),
                       SizedBox(
                         height: 12,
@@ -94,7 +94,7 @@ class OnboardingPage extends StatelessWidget {
                                     Theme.of(context)
                                         .colorScheme
                                         .inverseSurface)),
-                            child: Text("Log in as a guest user"),
+                            child: Text(kGuestLoginButtonText),
                           )),
                     ],
                   ),
