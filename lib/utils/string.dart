@@ -26,3 +26,4 @@ const kLoginErrorText = "Log in feature is currently unavailable";
 const kBookmarkedRatesText = "Bookmarked rates";
 const kUserName = 'Guest User';
 const kProfilePageTitle = "Profile";
+const sharedPrefsKey = 'isLoggedIn';

@@ -1,13 +1,20 @@
-import 'package:currency_exchange_app/pages/onboarding_page.dart';
+import 'package:currency_exchange_app/data/localstorage/local_data_source.dart';
+import 'package:currency_exchange_app/ui/pages/onboarding_page.dart';
 import 'package:currency_exchange_app/utils/dimens.dart';
 import 'package:currency_exchange_app/utils/images.dart';
 import 'package:currency_exchange_app/utils/string.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  final local = LocalDataSource();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,6 +112,7 @@ class ProfilePage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(20)),
                       child: ListTile(
                         onTap: () {
+                          local.saveLogoutStatus();
                           Navigator.pushReplacement<void, void>(
                               context,
                               MaterialPageRoute<void>(

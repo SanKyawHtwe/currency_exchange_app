@@ -1,5 +1,5 @@
-import 'package:currency_exchange_app/models/currency_model.dart';
-import 'package:currency_exchange_app/providers/currency_provider.dart';
+import 'package:currency_exchange_app/data/models/currency_model.dart';
+import 'package:currency_exchange_app/ui/providers/currency_provider.dart';
 import 'package:currency_exchange_app/utils/colors.dart';
 import 'package:currency_exchange_app/utils/custom_progress_indicator.dart';
 import 'package:currency_exchange_app/utils/dimens.dart';
