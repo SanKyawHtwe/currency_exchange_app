@@ -1,5 +1,5 @@
-import 'package:currency_exchange_app/pages/onboarding_page.dart';
-import 'package:currency_exchange_app/providers/currency_provider.dart';
+import 'package:currency_exchange_app/ui/pages/splash_screen.dart';
+import 'package:currency_exchange_app/ui/providers/currency_provider.dart';
 import 'package:currency_exchange_app/utils/colors.dart';
 import 'package:currency_exchange_app/utils/fonts.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
                       kCardGradient3
                     ], radius: 3, center: Alignment(-2, -1)),
                     borderRadius: BorderRadius.circular(20)),
-                child: OnboardingPage())),
+                child: SplashScreen())),
         debugShowCheckedModeBanner: true,
       ),
     );

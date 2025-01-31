@@ -1,5 +1,5 @@
-import 'package:currency_exchange_app/models/currency_model.dart';
-import 'package:currency_exchange_app/network/api_service.dart';
+import 'package:currency_exchange_app/data/models/currency_model.dart';
+import 'package:currency_exchange_app/data/network/api_service.dart';
 import 'package:currency_exchange_app/utils/result.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

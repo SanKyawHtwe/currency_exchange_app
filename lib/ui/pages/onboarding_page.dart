@@ -1,13 +1,20 @@
-import 'package:currency_exchange_app/pages/main_page.dart';
+import 'package:currency_exchange_app/data/localstorage/local_data_source.dart';
+import 'package:currency_exchange_app/ui/pages/main_page.dart';
 import 'package:currency_exchange_app/utils/colors.dart';
 import 'package:currency_exchange_app/utils/dimens.dart';
 import 'package:currency_exchange_app/utils/string.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
-class OnboardingPage extends StatelessWidget {
+class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
 
+  @override
+  State<OnboardingPage> createState() => _OnboardingPageState();
+}
+
+class _OnboardingPageState extends State<OnboardingPage> {
+  final local = LocalDataSource();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,6 +91,7 @@ class OnboardingPage extends StatelessWidget {
                           width: double.infinity,
                           child: FilledButton(
                             onPressed: () {
+                              local.saveLoginStatus();
                               Navigator.pushReplacement<void, void>(
                                   context,
                                   MaterialPageRoute<void>(
