@@ -4,6 +4,7 @@ import 'package:currency_exchange_app/utils/colors.dart';
 import 'package:currency_exchange_app/utils/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(const MyApp());
