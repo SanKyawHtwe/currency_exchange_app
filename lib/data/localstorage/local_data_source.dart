@@ -8,59 +8,47 @@ class LocalDataSource {
   static LocalDataSource get instance => localDataSource;
   late SharedPreferences _prefs;
 
-  Future<SharedPreferences> initSharePf() async {
+  Future<void> initSharePf() async {
     _prefs = await SharedPreferences.getInstance();
-    return _prefs;
   }
 
   Future<void> saveData<T>(String key, T value) async {
-    try {
-      if (value is bool) {
-        await _prefs.setBool(key, value);
-      } else if (value is int) {
-        await _prefs.setInt(key, value);
-      } else if (value is double) {
-        await _prefs.setDouble(key, value);
-      } else if (value is String) {
-        await _prefs.setString(key, value);
-      } else if (value is List<String>) {
-        await _prefs.setStringList(key, value);
-      } else {
-        await _prefs.setString(key, json.encode(value));
-      }
-    } catch (e) {
-      print("Error saving data for key '$key': $e");
+    await initSharePf();
+    if (value is bool) {
+      await _prefs.setBool(key, value);
+    } else if (value is int) {
+      await _prefs.setInt(key, value);
+    } else if (value is double) {
+      await _prefs.setDouble(key, value);
+    } else if (value is String) {
+      await _prefs.setString(key, value);
+    } else if (value is List<String>) {
+      await _prefs.setStringList(key, value);
+    } else if (value is User) {
+      await _prefs.setString(key, json.encode(value));
+    } else {
+      throw Exception('Unsupported type');
     }
   }
 
   Future<T?> getData<T>(String key) async {
-    try {
-      if (T == bool) {
-        return _prefs.getBool(key) as T?;
-      } else if (T == int) {
-        return _prefs.getInt(key) as T?;
-      } else if (T == double) {
-        return _prefs.getDouble(key) as T?;
-      } else if (T == String) {
-        return _prefs.getString(key) as T?;
-      } else if (T == List<String>) {
-        return _prefs.getStringList(key) as T?;
-      } else {
-        final String? jsonString = _prefs.getString(key);
-        if (jsonString != null) {
-          return _decodeCustomObject<T>(jsonString);
-        }
+    await initSharePf();
+    if (T == bool) {
+      return _prefs.getBool(key) as T?;
+    } else if (T == int) {
+      return _prefs.getInt(key) as T?;
+    } else if (T == double) {
+      return _prefs.getDouble(key) as T?;
+    } else if (T == String) {
+      return _prefs.getString(key) as T?;
+    } else if (T == List<String>) {
+      return _prefs.getStringList(key) as T?;
+    } else if (T == User) {
+      final String? userJson = _prefs.getString(key);
+      if (userJson != null) {
+        final Map<String, dynamic> userMap = json.decode(userJson);
+        return User.fromJson(userMap) as T?;
       }
-    } catch (e) {
-      print("Error retrieving data for key '$key': $e");
-    }
-    return null;
-  }
-
-  T? _decodeCustomObject<T>(String jsonString) {
-    if (T == User) {
-      final Map<String, dynamic> map = json.decode(jsonString);
-      return User.fromJson(map) as T?;
     }
     return null;
   }
@@ -74,12 +62,11 @@ class LocalDataSource {
   }
 
   Future<bool> getLoginInfo() async {
-    final bool? isLoggedIn = await getData<bool>(isLoggedInKey);
-    return isLoggedIn ?? false;
+    return await getData<bool>(isLoggedInKey) ?? false;
   }
 
   Future<void> saveUser(User user) async {
-    await saveData(kUserInfoKey, user);
+    await saveData(kUserInfoKey, user.toJson());
   }
 
   Future<User?> getUser() async {
