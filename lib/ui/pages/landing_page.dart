@@ -19,6 +19,7 @@ class LandingPage extends StatelessWidget {
         backgroundColor: Colors.transparent,
         extendBodyBehindAppBar: true,
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           backgroundColor: Colors.transparent,
           title: Text(kLandingPageTitle),
           centerTitle: true,
@@ -360,40 +361,69 @@ class _BodyViewState extends State<_BodyView> {
                                   height: 16,
                                 ),
                                 // Swap currencies Button
-                                Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 16),
-                                  width: double.infinity,
-                                  child: FilledButton.icon(
-                                    style: ButtonStyle(
-                                        backgroundColor: WidgetStatePropertyAll(
-                                            Theme.of(context)
-                                                .colorScheme
-                                                .inverseSurface)),
-                                    onPressed: () {
-                                      currencyProvider.swapCurrencies();
-                                      currencyProvider.calculateResult(
-                                        inputAmount: _fromController.text,
-                                        fromCurrency:
-                                            currencyProvider.fromCurrency.value,
-                                        toCurrency:
-                                            currencyProvider.toCurrency.value,
-                                      );
-                                    },
-                                    label: Text(''),
-                                    icon: Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 18,
-                                          bottom: 18,
-                                          left: 68,
-                                          right: 60),
-                                      child: Icon(
-                                        CupertinoIcons.arrow_up_arrow_down,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .surface,
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      //Add bookmark button
+                                      Expanded(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .surfaceContainer,
+                                              borderRadius:
+                                                  BorderRadius.circular(20)),
+                                          child: IconButton(
+                                            tooltip: 'Add to bookmark',
+                                            onPressed: () {},
+                                            icon: Icon(
+                                              Icons.bookmark_add,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onSurface,
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                    // iconSize: 16,
+                                      SizedBox(
+                                        width: 8,
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .inverseSurface,
+                                              borderRadius:
+                                                  BorderRadius.circular(20)),
+                                          child: IconButton(
+                                            tooltip: 'Swap currencies',
+                                            onPressed: () {
+                                              currencyProvider.swapCurrencies();
+                                              currencyProvider.calculateResult(
+                                                inputAmount:
+                                                    _fromController.text,
+                                                fromCurrency: currencyProvider
+                                                    .fromCurrency.value,
+                                                toCurrency: currencyProvider
+                                                    .toCurrency.value,
+                                              );
+                                            },
+                                            icon: Icon(
+                                              CupertinoIcons
+                                                  .arrow_up_arrow_down,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .surface,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
 

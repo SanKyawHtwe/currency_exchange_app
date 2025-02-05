@@ -27,3 +27,5 @@ const kBookmarkedRatesText = "Bookmarked rates";
 const kUserName = 'Guest User';
 const kProfilePageTitle = "Profile";
 const sharedPrefsKey = 'isLoggedIn';
+const kInvalidInputText = 'Invalid input';
+const kPasswordText = 'Password';

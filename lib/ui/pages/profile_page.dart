@@ -1,4 +1,6 @@
 import 'package:currency_exchange_app/data/localstorage/local_data_source.dart';
+import 'package:currency_exchange_app/data/models/user_model.dart';
+import 'package:currency_exchange_app/ui/pages/bookmark_page.dart';
 import 'package:currency_exchange_app/ui/pages/onboarding_page.dart';
 import 'package:currency_exchange_app/utils/dimens.dart';
 import 'package:currency_exchange_app/utils/images.dart';
@@ -15,6 +17,21 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final local = LocalDataSource();
+  User? _user;
+
+  Future<void> _getUserInfo() async {
+    final User? user = await local.getUser();
+    setState(() {
+      _user = user ?? User(name: 'Guest user', password: '', email: '');
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getUserInfo();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,6 +40,7 @@ class _ProfilePageState extends State<ProfilePage> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           centerTitle: true,
+          automaticallyImplyLeading: false,
           title: Text(
             kProfilePageTitle,
             style: TextStyle(
@@ -49,7 +67,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       height: 16,
                     ),
                     Text(
-                      kUserName,
+                      _user?.email ?? 'Guest user',
                       style: TextStyle(
                           fontSize: 20,
                           color: Theme.of(context).colorScheme.onSurface),
@@ -57,16 +75,19 @@ class _ProfilePageState extends State<ProfilePage> {
                     SizedBox(
                       height: 12,
                     ),
-                    OutlinedButton(
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(kLoginErrorText)));
-                        },
-                        child: Text(
-                          kLoginButtonText,
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.onSurface),
-                        ))
+                    _user?.name == null
+                        ? OutlinedButton(
+                            onPressed: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(kLoginErrorText)));
+                            },
+                            child: Text(
+                              kLoginButtonText,
+                              style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface),
+                            ))
+                        : SizedBox.shrink()
                   ],
                 ),
 
@@ -95,8 +116,11 @@ class _ProfilePageState extends State<ProfilePage> {
                           borderRadius: BorderRadius.circular(20)),
                       child: ListTile(
                         onTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(kBookmarkErrorText)));
+                          // ScaffoldMessenger.of(context).showSnackBar(
+                          //     SnackBar(content: Text(kBookmarkErrorText)));
+                          Navigator.of((context)).push(MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  BookmarkPage()));
                         },
                         leading: Icon(CupertinoIcons.bookmark),
                         title: Text(kBookmarkedRatesText),
@@ -104,28 +128,55 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ),
                     SizedBox(
-                      height: 12,
+                      height: 20,
                     ),
-                    Container(
-                      decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primaryContainer,
-                          borderRadius: BorderRadius.circular(20)),
-                      child: ListTile(
-                        onTap: () {
-                          local.saveLogoutStatus();
-                          Navigator.pushReplacement<void, void>(
-                              context,
-                              MaterialPageRoute<void>(
-                                  builder: (BuildContext context) =>
-                                      const OnboardingPage()));
-                        },
-                        leading: Icon(
-                          Icons.logout,
-                          color: Theme.of(context).colorScheme.error,
-                        ),
-                        title: Text(kLogoutButtonText),
-                        trailing: Icon(CupertinoIcons.forward),
+                    ListTile(
+                      onTap: () {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: Text('Logging out'),
+                                content: SingleChildScrollView(
+                                  child: ListBody(
+                                    children: [
+                                      Text('Are you sure to log out?'),
+                                    ],
+                                  ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      local.saveLogoutStatus();
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const OnboardingPage()));
+                                    },
+                                    child: Text(
+                                      kLogoutButtonText,
+                                      style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .error),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            });
+                      },
+                      leading: Icon(
+                        Icons.logout,
+                        color: Theme.of(context).colorScheme.error,
                       ),
+                      title: Text(kLogoutButtonText),
                     )
                   ],
                 )

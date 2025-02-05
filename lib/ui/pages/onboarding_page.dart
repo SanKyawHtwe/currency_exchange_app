@@ -1,4 +1,5 @@
 import 'package:currency_exchange_app/data/localstorage/local_data_source.dart';
+import 'package:currency_exchange_app/ui/pages/login_page.dart';
 import 'package:currency_exchange_app/ui/pages/main_page.dart';
 import 'package:currency_exchange_app/utils/colors.dart';
 import 'package:currency_exchange_app/utils/dimens.dart';
@@ -36,25 +37,28 @@ class _OnboardingPageState extends State<OnboardingPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                AspectRatio(
-                  aspectRatio: 9 / 12,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Text(
-                          kAppName,
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.onSurface,
-                              fontSize: kTitleFontSize,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Lottie.asset(
-                          kOnboardingLottie,
-                          repeat: true,
-                        ),
-                      ],
+                Container(
+                  constraints: BoxConstraints(maxHeight: 500),
+                  child: AspectRatio(
+                    aspectRatio: 9 / 12,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Text(
+                            kAppName,
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.onSurface,
+                                fontSize: kTitleFontSize,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Lottie.asset(
+                            kOnboardingLottie,
+                            repeat: true,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -74,10 +78,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           width: double.infinity,
                           child: FilledButton(
                             onPressed: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      duration: Duration(milliseconds: 1000),
-                                      content: Text(kLoginUnavailableText)));
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          const LoginPage()));
                             },
                             style: ButtonStyle(
                                 backgroundColor: WidgetStatePropertyAll(

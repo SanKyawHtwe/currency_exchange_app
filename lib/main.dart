@@ -1,3 +1,5 @@
+import 'package:currency_exchange_app/data/localstorage/local_data_source.dart';
+
 import 'package:currency_exchange_app/ui/pages/splash_screen.dart';
 import 'package:currency_exchange_app/ui/providers/currency_provider.dart';
 import 'package:currency_exchange_app/utils/colors.dart';
@@ -5,7 +7,9 @@ import 'package:currency_exchange_app/utils/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await LocalDataSource.instance.initSharePf();
   runApp(const MyApp());
 }
 

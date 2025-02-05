@@ -12,7 +12,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  final LocalDataSource _localDataSource = LocalDataSource();
   @override
   void initState() {
     super.initState();
@@ -20,16 +19,14 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _checkLoginStatus() async {
-    bool isLoggedIn = await _localDataSource.getLoginInfo();
+    bool isLoggedIn = await LocalDataSource.instance.getLoginInfo();
 
     if (isLoggedIn) {
-      Navigator.pushReplacement(
-        context,
+      Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => MainPage()),
       );
     } else {
-      Navigator.pushReplacement(
-        context,
+      Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => OnboardingPage()),
       );
     }
