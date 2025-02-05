@@ -1,4 +1,5 @@
-import 'package:currency_exchange_app/data/localstorage/local_data_source.dart';
+import 'package:currency_exchange_app/data/local/auth_service.dart';
+import 'package:currency_exchange_app/data/local/local_data_source.dart';
 import 'package:currency_exchange_app/data/models/user_model.dart';
 import 'package:currency_exchange_app/ui/pages/bookmark_page.dart';
 import 'package:currency_exchange_app/ui/pages/onboarding_page.dart';
@@ -17,12 +18,15 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final local = LocalDataSource();
+  final authService = AuthService();
   User? _user;
 
   Future<void> _getUserInfo() async {
-    final User? user = await local.getUser();
+    User? user = await authService.getUser();
     setState(() {
-      _user = user ?? User(name: 'Guest user', password: '', email: 'Unknown');
+      if (user != null) {
+        _user = user;
+      }
     });
   }
 
@@ -154,6 +158,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   TextButton(
                                     onPressed: () {
                                       local.saveLogoutStatus();
+                                      authService.logout();
                                       Navigator.pushReplacement(
                                           context,
                                           MaterialPageRoute(

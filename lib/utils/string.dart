@@ -30,3 +30,5 @@ const isLoggedInKey = 'is_logged_in';
 const kInvalidInputText = 'Invalid input';
 const kPasswordText = 'Password';
 const kUserInfoKey = 'user_info';
+const currentUserKey = 'current_user';
+const usersBox = 'users';

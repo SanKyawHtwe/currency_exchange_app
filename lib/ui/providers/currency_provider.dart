@@ -1,4 +1,4 @@
-import 'package:currency_exchange_app/data/localstorage/local_data_source.dart';
+import 'package:currency_exchange_app/data/local/local_data_source.dart';
 import 'package:currency_exchange_app/data/models/currency_model.dart';
 import 'package:currency_exchange_app/data/network/api_service.dart';
 import 'package:currency_exchange_app/utils/result.dart';

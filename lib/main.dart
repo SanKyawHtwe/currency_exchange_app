@@ -1,14 +1,19 @@
-import 'package:currency_exchange_app/data/localstorage/local_data_source.dart';
-
+import 'package:currency_exchange_app/data/local/local_data_source.dart';
+import 'package:currency_exchange_app/data/models/user_model.dart';
 import 'package:currency_exchange_app/ui/pages/splash_screen.dart';
 import 'package:currency_exchange_app/ui/providers/currency_provider.dart';
 import 'package:currency_exchange_app/utils/colors.dart';
 import 'package:currency_exchange_app/utils/fonts.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final appDocumentDirectory = await getApplicationDocumentsDirectory();
+  Hive.init(appDocumentDirectory.path);
+  Hive.registerAdapter(UserAdapter());
   await LocalDataSource.instance.initSharePf();
   runApp(MyApp());
 }

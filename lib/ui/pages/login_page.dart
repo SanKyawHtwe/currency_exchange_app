@@ -1,6 +1,7 @@
 import 'dart:convert';
 
-import 'package:currency_exchange_app/data/localstorage/local_data_source.dart';
+import 'package:currency_exchange_app/data/local/auth_service.dart';
+import 'package:currency_exchange_app/data/local/local_data_source.dart';
 import 'package:currency_exchange_app/data/models/user_model.dart';
 import 'package:currency_exchange_app/ui/pages/main_page.dart';
 import 'package:currency_exchange_app/utils/string.dart';
@@ -33,6 +34,7 @@ class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
   bool isVisible = false;
   final local = LocalDataSource();
+  final authService = AuthService();
   bool _isLoading = false;
   // final _nameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -83,14 +85,14 @@ class _LoginFormState extends State<LoginForm> {
       User matchingUser = users.firstWhere(
         (user) =>
             user.email == enteredEmail && user.password == enteredPassword,
-        orElse: () => User(email: "", password: ""),
+        orElse: () => User(name: '', email: "", password: ""),
       );
 
+      authService.saveUser(matchingUser);
       if (matchingUser.email.isNotEmpty) {
         _navigateToMainPage();
         setState(() {
           message = 'Login successful! Welcome, ${matchingUser.name}';
-          local.saveUser(matchingUser);
         });
       } else {
         setState(() {
