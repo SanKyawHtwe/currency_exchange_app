@@ -22,7 +22,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _getUserInfo() async {
     final User? user = await local.getUser();
     setState(() {
-      _user = user ?? User(name: 'Guest user', password: '', email: '');
+      _user = user ?? User(name: 'Guest user', password: '', email: 'Unknown');
     });
   }
 
@@ -67,7 +67,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       height: 16,
                     ),
                     Text(
-                      _user?.email ?? 'Guest user',
+                      _user?.name ?? 'Guest user',
                       style: TextStyle(
                           fontSize: 20,
                           color: Theme.of(context).colorScheme.onSurface),
