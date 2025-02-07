@@ -1,3 +1,6 @@
+import 'package:currency_exchange_app/data/local/auth_service.dart';
+import 'package:currency_exchange_app/data/local/bookmark_service.dart';
+import 'package:currency_exchange_app/data/models/bookmark_model.dart';
 import 'package:currency_exchange_app/data/models/currency_model.dart';
 import 'package:currency_exchange_app/ui/providers/currency_provider.dart';
 import 'package:currency_exchange_app/utils/colors.dart';
@@ -39,6 +42,24 @@ class _BodyView extends StatefulWidget {
 
 class _BodyViewState extends State<_BodyView> {
   final TextEditingController _fromController = TextEditingController();
+  final _bookmarkService = BookmarkService();
+  final auth = AuthService();
+
+  Future<void> _addBookmark({
+    required String fromCurrency,
+    required String toCurrency,
+    required String inputValue,
+    required String outputValue,
+  }) async {
+    final currentUser = await auth.getUser();
+    _bookmarkService.saveBookmark(
+        currentUser?.name ?? 'Guest user',
+        Bookmark(
+            fromCurrency: fromCurrency,
+            toCurrency: toCurrency,
+            inputValue: inputValue,
+            outputValue: outputValue));
+  }
 
   @override
   void initState() {
@@ -379,7 +400,22 @@ class _BodyViewState extends State<_BodyView> {
                                                   BorderRadius.circular(20)),
                                           child: IconButton(
                                             tooltip: 'Add to bookmark',
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              _addBookmark(
+                                                fromCurrency: currencyProvider
+                                                    .fromCurrency.value.name,
+                                                toCurrency: currencyProvider
+                                                    .toCurrency.value.name,
+                                                inputValue:
+                                                    _fromController.text,
+                                                outputValue: currencyProvider
+                                                    .result.value,
+                                              );
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(SnackBar(
+                                                      content: Text(
+                                                          'Bookmarked successfully')));
+                                            },
                                             icon: Icon(
                                               Icons.bookmark_add,
                                               color: Theme.of(context)

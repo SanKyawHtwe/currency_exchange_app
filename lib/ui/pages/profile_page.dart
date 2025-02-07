@@ -83,10 +83,10 @@ class _ProfilePageState extends State<ProfilePage> {
                         ? OutlinedButton(
                             onPressed: () {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(kLoginErrorText)));
+                                  SnackBar(content: Text('Comming soon')));
                             },
                             child: Text(
-                              kLoginButtonText,
+                              'Create a account',
                               style: TextStyle(
                                   color:
                                       Theme.of(context).colorScheme.onSurface),

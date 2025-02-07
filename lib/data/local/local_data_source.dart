@@ -6,8 +6,9 @@ class LocalDataSource {
   static LocalDataSource get instance => localDataSource;
   late SharedPreferences _prefs;
 
-  Future<void> initSharePf() async {
+  Future<LocalDataSource> initSharePf() async {
     _prefs = await SharedPreferences.getInstance();
+    return this;
   }
 
   Future<void> saveLoginStatus() async {

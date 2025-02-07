@@ -31,4 +31,6 @@ const kInvalidInputText = 'Invalid input';
 const kPasswordText = 'Password';
 const kUserInfoKey = 'user_info';
 const currentUserKey = 'current_user';
-const usersBox = 'users';
+const usersBoxKey = 'users';
+const bookmarkBoxKey = 'bookmarks';
+const noBookmarkText = 'No bookmark added yet';

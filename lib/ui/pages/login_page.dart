@@ -17,7 +17,6 @@ class LoginPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
       ),
-      // backgroundColor: Colors.transparent,
       body: LoginForm(),
     );
   }
