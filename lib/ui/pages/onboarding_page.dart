@@ -1,13 +1,21 @@
-import 'package:currency_exchange_app/pages/main_page.dart';
+import 'package:currency_exchange_app/data/local/local_data_source.dart';
+import 'package:currency_exchange_app/ui/pages/login_page.dart';
+import 'package:currency_exchange_app/ui/pages/main_page.dart';
 import 'package:currency_exchange_app/utils/colors.dart';
 import 'package:currency_exchange_app/utils/dimens.dart';
 import 'package:currency_exchange_app/utils/string.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
-class OnboardingPage extends StatelessWidget {
+class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
 
+  @override
+  State<OnboardingPage> createState() => _OnboardingPageState();
+}
+
+class _OnboardingPageState extends State<OnboardingPage> {
+  final local = LocalDataSource();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,31 +37,34 @@ class OnboardingPage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                AspectRatio(
-                  aspectRatio: 9 / 12,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Text(
-                          "EzRate",
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.onSurface,
-                              fontSize: kTitleFontSize,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Lottie.asset(
-                          kOnboardingLottie,
-                          repeat: true,
-                        ),
-                      ],
+                Container(
+                  constraints: BoxConstraints(maxHeight: 500),
+                  child: AspectRatio(
+                    aspectRatio: 9 / 12,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Text(
+                            kAppName,
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.onSurface,
+                                fontSize: kTitleFontSize,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Lottie.asset(
+                            kOnboardingLottie,
+                            repeat: true,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
                 Text(
                   textAlign: TextAlign.center,
-                  "A fast, easy way to exchange currencies at your fingertips",
+                  kOnboardingText,
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 16,
@@ -67,14 +78,16 @@ class OnboardingPage extends StatelessWidget {
                           width: double.infinity,
                           child: FilledButton(
                             onPressed: () {
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                  content: Text(
-                                      "Log in feature is currently unavailable")));
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          const LoginPage()));
                             },
                             style: ButtonStyle(
                                 backgroundColor: WidgetStatePropertyAll(
                                     Theme.of(context).colorScheme.primary)),
-                            child: Text("Log In"),
+                            child: Text(kLoginButtonText),
                           )),
                       SizedBox(
                         height: 12,
@@ -83,6 +96,7 @@ class OnboardingPage extends StatelessWidget {
                           width: double.infinity,
                           child: FilledButton(
                             onPressed: () {
+                              local.saveLoginStatus();
                               Navigator.pushReplacement<void, void>(
                                   context,
                                   MaterialPageRoute<void>(
@@ -94,7 +108,7 @@ class OnboardingPage extends StatelessWidget {
                                     Theme.of(context)
                                         .colorScheme
                                         .inverseSurface)),
-                            child: Text("Log in as a guest user"),
+                            child: Text(kGuestLoginButtonText),
                           )),
                     ],
                   ),

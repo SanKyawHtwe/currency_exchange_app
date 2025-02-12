@@ -1,8 +1,9 @@
-import 'package:currency_exchange_app/models/currency_model.dart';
-import 'package:currency_exchange_app/network/api_service.dart';
+import 'package:currency_exchange_app/data/models/currency_model.dart';
+import 'package:currency_exchange_app/data/network/api_service.dart';
 import 'package:currency_exchange_app/utils/colors.dart';
 import 'package:currency_exchange_app/utils/custom_progress_indicator.dart';
 import 'package:currency_exchange_app/utils/dimens.dart';
+import 'package:currency_exchange_app/utils/string.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
@@ -31,6 +32,10 @@ class _HistoricalRatesChartState extends State<HistoricalRatesChart> {
 
   Future<void> _fetchData() async {
     try {
+      setState(() {
+        _errorMessage = null;
+        _isLoading = true;
+      });
       Map<String, dynamic> data = await _apiService.fetchExchangeRates(
           startDate: '2024-01-01', endDate: '2025-01-26', baseCurrency: 'USD');
 
@@ -80,7 +85,7 @@ class _HistoricalRatesChartState extends State<HistoricalRatesChart> {
         Spacer(),
         spots.isEmpty
             ? Center(
-                child: Text("Data not found"),
+                child: Text(kDataNotFoundText),
               )
             : AspectRatio(
                 aspectRatio: 4 / 3,
@@ -109,7 +114,7 @@ class _HistoricalRatesChartState extends State<HistoricalRatesChart> {
                               );
                             },
                           ),
-                          axisNameWidget: const Text('Rate',
+                          axisNameWidget: const Text(kRateText,
                               style: TextStyle(fontSize: 14)),
                         ),
                         bottomTitles: AxisTitles(
@@ -126,7 +131,7 @@ class _HistoricalRatesChartState extends State<HistoricalRatesChart> {
                               );
                             },
                           ),
-                          axisNameWidget: const Text('Year',
+                          axisNameWidget: const Text(kYearText,
                               style: TextStyle(fontSize: 14)),
                         ),
                       ),
@@ -190,7 +195,46 @@ class _HistoricalRatesChartState extends State<HistoricalRatesChart> {
             child: _isLoading
                 ? Center(child: CustomProgressIndicator())
                 : _errorMessage != null
-                    ? Center(child: Text('Error: $_errorMessage'))
+                    ? Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                '$_errorMessage',
+                                style: TextStyle(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface),
+                              ),
+                              SizedBox(
+                                height: 16,
+                              ),
+                              ElevatedButton(
+                                style: ButtonStyle(
+                                  backgroundColor: WidgetStatePropertyAll(
+                                      Theme.of(context)
+                                          .colorScheme
+                                          .inverseSurface),
+                                ),
+                                onPressed: () async {
+                                  setState(() {
+                                    _fetchData();
+                                  });
+                                },
+                                child: Text(kRetryButtonText,
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .surfaceContainer)),
+                              )
+                            ],
+                          ),
+                        ),
+                      )
                     : SafeArea(
                         child: DefaultTabController(
                           initialIndex: 1,
@@ -199,7 +243,8 @@ class _HistoricalRatesChartState extends State<HistoricalRatesChart> {
                             backgroundColor: Colors.transparent,
                             appBar: AppBar(
                               backgroundColor: Colors.transparent,
-                              title: Text('Exchange Rate Chart per Year'),
+                              title: Text(kHistoricalRatePageTitle),
+                              centerTitle: true,
                               titleTextStyle: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: kTitleFontSize,

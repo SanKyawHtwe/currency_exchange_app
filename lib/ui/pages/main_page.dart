@@ -1,6 +1,6 @@
-import 'package:currency_exchange_app/pages/landing_page.dart';
-import 'package:currency_exchange_app/pages/profile_page.dart';
-import 'package:currency_exchange_app/pages/historical_rates_chart_page.dart';
+import 'package:currency_exchange_app/ui/pages/landing_page.dart';
+import 'package:currency_exchange_app/ui/pages/profile_page.dart';
+import 'package:currency_exchange_app/ui/pages/historical_rates_chart_page.dart';
 import 'package:currency_exchange_app/utils/colors.dart';
 import 'package:currency_exchange_app/utils/dimens.dart';
 import 'package:flutter/cupertino.dart';

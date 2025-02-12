@@ -1,0 +1,20 @@
+{
+    "data":[
+        {
+            "name":"Hla Hla1",
+            "email":"hlahla1@gmail.com",
+            "password":"hlahla123"
+        },
+        {
+            "name":"Hla Hla2",
+            "email":"hlahla2@gmail.com",
+            "password":"11111111"
+        },
+        {
+            "name": "admin",
+            "email": "admin@gmail.com",
+            "password": "admin"
+            
+        }
+    ]
+}

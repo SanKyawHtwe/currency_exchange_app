@@ -1,8 +1,12 @@
-import 'package:currency_exchange_app/models/currency_model.dart';
-import 'package:currency_exchange_app/providers/currency_provider.dart';
+import 'package:currency_exchange_app/data/local/auth_service.dart';
+import 'package:currency_exchange_app/data/local/bookmark_service.dart';
+import 'package:currency_exchange_app/data/models/bookmark_model.dart';
+import 'package:currency_exchange_app/data/models/currency_model.dart';
+import 'package:currency_exchange_app/ui/providers/currency_provider.dart';
 import 'package:currency_exchange_app/utils/colors.dart';
 import 'package:currency_exchange_app/utils/custom_progress_indicator.dart';
 import 'package:currency_exchange_app/utils/dimens.dart';
+import 'package:currency_exchange_app/utils/string.dart';
 import 'package:flag/flag.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -18,8 +22,10 @@ class LandingPage extends StatelessWidget {
         backgroundColor: Colors.transparent,
         extendBodyBehindAppBar: true,
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           backgroundColor: Colors.transparent,
-          title: Text("CURRENCY EXCHANGE"),
+          title: Text(kLandingPageTitle),
+          centerTitle: true,
           titleTextStyle: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: kTitleFontSize,
@@ -36,6 +42,24 @@ class _BodyView extends StatefulWidget {
 
 class _BodyViewState extends State<_BodyView> {
   final TextEditingController _fromController = TextEditingController();
+  final _bookmarkService = BookmarkService();
+  final auth = AuthService();
+
+  Future<void> _addBookmark({
+    required String fromCurrency,
+    required String toCurrency,
+    required String inputValue,
+    required String outputValue,
+  }) async {
+    final currentUser = await auth.getUser();
+    _bookmarkService.saveBookmark(
+        currentUser?.name ?? 'Guest user',
+        Bookmark(
+            fromCurrency: fromCurrency,
+            toCurrency: toCurrency,
+            inputValue: inputValue,
+            outputValue: outputValue));
+  }
 
   @override
   void initState() {
@@ -92,7 +116,7 @@ class _BodyViewState extends State<_BodyView> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    "Select currency",
+                    kBottomSheetTitle,
                     style: TextStyle(
                         fontSize: 20,
                         color: Theme.of(context).colorScheme.onSurface),
@@ -173,7 +197,7 @@ class _BodyViewState extends State<_BodyView> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    "Select currency",
+                    kBottomSheetTitle,
                     style: TextStyle(
                         fontSize: 20,
                         color: Theme.of(context).colorScheme.onSurface),
@@ -219,7 +243,7 @@ class _BodyViewState extends State<_BodyView> {
                           Navigator.pop(context);
                         },
                         child: Text(
-                          "Cancel",
+                          kBottomSheetCancelText,
                           style: TextStyle(
                               color: Theme.of(context)
                                   .colorScheme
@@ -294,7 +318,7 @@ class _BodyViewState extends State<_BodyView> {
                                                       CupertinoIcons
                                                           .arrow_up_right),
                                                   SizedBox(width: 8),
-                                                  Text("Enter Amount"),
+                                                  Text(kInputCurrencyText),
                                                 ],
                                               ),
                                               labelStyle: TextStyle(
@@ -306,7 +330,7 @@ class _BodyViewState extends State<_BodyView> {
                                               counterText: "",
                                               enabled:
                                                   !currencyProvider.isLoading,
-                                              hintText: "From"),
+                                              hintText: kInputCurrencyHintText),
                                           keyboardType: TextInputType.number,
                                         ),
                                       ),
@@ -358,40 +382,84 @@ class _BodyViewState extends State<_BodyView> {
                                   height: 16,
                                 ),
                                 // Swap currencies Button
-                                Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 16),
-                                  width: double.infinity,
-                                  child: FilledButton.icon(
-                                    style: ButtonStyle(
-                                        backgroundColor: WidgetStatePropertyAll(
-                                            Theme.of(context)
-                                                .colorScheme
-                                                .inverseSurface)),
-                                    onPressed: () {
-                                      currencyProvider.swapCurrencies();
-                                      currencyProvider.calculateResult(
-                                        inputAmount: _fromController.text,
-                                        fromCurrency:
-                                            currencyProvider.fromCurrency.value,
-                                        toCurrency:
-                                            currencyProvider.toCurrency.value,
-                                      );
-                                    },
-                                    label: Text(''),
-                                    icon: Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 18,
-                                          bottom: 18,
-                                          left: 68,
-                                          right: 60),
-                                      child: Icon(
-                                        CupertinoIcons.arrow_up_arrow_down,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .surface,
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      //Add bookmark button
+                                      Expanded(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .surfaceContainer,
+                                              borderRadius:
+                                                  BorderRadius.circular(20)),
+                                          child: IconButton(
+                                            tooltip: 'Add to bookmark',
+                                            onPressed: () {
+                                              _addBookmark(
+                                                fromCurrency: currencyProvider
+                                                    .fromCurrency.value.name,
+                                                toCurrency: currencyProvider
+                                                    .toCurrency.value.name,
+                                                inputValue:
+                                                    _fromController.text,
+                                                outputValue: currencyProvider
+                                                    .result.value,
+                                              );
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(SnackBar(
+                                                      content: Text(
+                                                          'Bookmarked successfully')));
+                                            },
+                                            icon: Icon(
+                                              Icons.bookmark_add,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onSurface,
+                                            ),
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                    // iconSize: 16,
+                                      SizedBox(
+                                        width: 8,
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .inverseSurface,
+                                              borderRadius:
+                                                  BorderRadius.circular(20)),
+                                          child: IconButton(
+                                            tooltip: 'Swap currencies',
+                                            onPressed: () {
+                                              currencyProvider.swapCurrencies();
+                                              currencyProvider.calculateResult(
+                                                inputAmount:
+                                                    _fromController.text,
+                                                fromCurrency: currencyProvider
+                                                    .fromCurrency.value,
+                                                toCurrency: currencyProvider
+                                                    .toCurrency.value,
+                                              );
+                                            },
+                                            icon: Icon(
+                                              CupertinoIcons
+                                                  .arrow_up_arrow_down,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .surface,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
 
@@ -431,7 +499,8 @@ class _BodyViewState extends State<_BodyView> {
                                                         const SizedBox(
                                                           width: 8,
                                                         ),
-                                                        Text("You receive"),
+                                                        Text(
+                                                            kOutputCurrencyText),
                                                       ],
                                                     ),
                                                     labelStyle: TextStyle(
@@ -446,7 +515,8 @@ class _BodyViewState extends State<_BodyView> {
                                                         .surfaceContainer,
                                                     enabled: !currencyProvider
                                                         .isLoading,
-                                                    hintText: "To"),
+                                                    hintText:
+                                                        kOutputCurrencyHintText),
                                                 keyboardType:
                                                     TextInputType.number,
                                               );
@@ -503,7 +573,7 @@ class _BodyViewState extends State<_BodyView> {
                                 Expanded(
                                   child: Text(
                                     textAlign: TextAlign.center,
-                                    "Last updated at :",
+                                    kLastUpdatedAtText,
                                     style: TextStyle(
                                       fontSize: 14,
                                       color: Theme.of(context)
@@ -553,7 +623,7 @@ class _BodyViewState extends State<_BodyView> {
               Provider.of<CurrencyProvider>(context, listen: false)
                   .getExchangeRate();
             },
-            child: Text("Retry",
+            child: Text(kRetryButtonText,
                 style: TextStyle(
                     color: Theme.of(context).colorScheme.surfaceContainer)),
           )

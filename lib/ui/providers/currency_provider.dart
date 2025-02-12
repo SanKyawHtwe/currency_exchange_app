@@ -1,12 +1,15 @@
-import 'package:currency_exchange_app/models/currency_model.dart';
-import 'package:currency_exchange_app/network/api_service.dart';
+import 'package:currency_exchange_app/data/local/local_data_source.dart';
+import 'package:currency_exchange_app/data/models/currency_model.dart';
+import 'package:currency_exchange_app/data/network/api_service.dart';
 import 'package:currency_exchange_app/utils/result.dart';
+import 'package:currency_exchange_app/utils/string.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class CurrencyProvider extends ChangeNotifier {
   final _apiService = ApiService();
+  final localDataSource = LocalDataSource();
   final fiveDecimalFormat = NumberFormat.currency(symbol: '', decimalDigits: 5);
   final currencyFormat = NumberFormat.currency(symbol: '', decimalDigits: 2);
   final sameFormat = NumberFormat.currency(symbol: '', decimalDigits: 0);
@@ -60,11 +63,8 @@ class CurrencyProvider extends ChangeNotifier {
     }
 
     try {
-      double? amount = double.tryParse(inputAmount);
-      if (amount == null) {
-        result.value = '';
-        return;
-      }
+      double? amount = double.parse(inputAmount);
+
       final rates = currencyData?.data?.currencies as Map<Code, dynamic>;
 
       final fromRate = rates[fromCurrency].value;
@@ -92,7 +92,7 @@ class CurrencyProvider extends ChangeNotifier {
         result.value = fiveDecimalFormat.format(exchangedAmount);
       }
     } catch (e) {
-      result.value = '';
+      result.value = kInvalidInputText;
     }
   }
 }
